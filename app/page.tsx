@@ -67,7 +67,7 @@ function Chat() {
     return savedModel || DEFAULT_MODEL;
   });
 
-  // Check for returnPrompt URL parameter and pre-fill prompt.
+  // Check for returnPrompt URL parameter and pre-fill prompt
   const [prompt, setPrompt] = useState("");
   const { enhancePrompt, enhancingPrompt } = usePromptEnhancer();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
