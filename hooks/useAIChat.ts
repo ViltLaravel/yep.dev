@@ -1,7 +1,6 @@
 'use client';
 
 import { $workbench, clearStreamingContent, setWorkbenchView, updateStreamingContent } from '@/app/lib/stores/workbenchStore';
-import { getAllApiKeysFromStorage } from '@/lib/api-keys';
 import { WORK_DIR } from '@/lib/prompt';
 import { Message } from '@/lib/services/conversationService';
 import { getAllFilesFromWebContainer } from '@/lib/services/webContainerSync';
@@ -1052,7 +1051,6 @@ export const useAIChat = (
 			}
 
 			const formattedMessages = messagesForPayload.map(m => ({ role: m.role, content: m.content }));
-			const apiKeys = getAllApiKeysFromStorage(userId);
 
 			const requestPayload = {
 				messages: formattedMessages,
@@ -1061,7 +1059,6 @@ export const useAIChat = (
 				contextOptimization: true,
 				conversationId: conversationId,
 				selectedModel: selectedModel,
-				apiKeys: apiKeys
 			};
 
 			const response = await fetch('/api/chat', {
@@ -1297,8 +1294,6 @@ export const useAIChat = (
 
 			const formattedMessages = messagesForPayload.map(m => ({ role: m.role, content: m.content }));
 
-			const apiKeys = getAllApiKeysFromStorage(userId);
-
 			const requestPayload = {
 				messages: formattedMessages,
 				files: currentWCFiles,
@@ -1306,7 +1301,6 @@ export const useAIChat = (
 				contextOptimization: true,
 				conversationId: conversationId,
 				selectedModel: selectedModel,
-				apiKeys: apiKeys
 			};
 
 			const response = await fetch('/api/chat', {

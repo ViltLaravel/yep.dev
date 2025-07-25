@@ -42,20 +42,49 @@ export async function POST(req: Request) {
       });
     }
 
-    // Create checkout session
+    const body = await req.json();
+    const creditsToBuy = body.credits;
+    if (!creditsToBuy || typeof creditsToBuy !== 'number' || creditsToBuy <= 0) {
+      return new NextResponse("Invalid credits amount", { status: 400 });
+    }
+
+    // Calculate price and fee
+    // Example: $1 per credit (adjust as needed)
+    const pricePerCredit = 1.0;
+    let amount = creditsToBuy * pricePerCredit;
+    let fee = 0;
+    if (amount >= 20) {
+      fee = amount * 0.055;
+    } else {
+      fee = 0.80;
+    }
+    const totalAmount = Math.round((amount + fee) * 100); // in cents
+    const netCredits = amount - fee; // credits after fee
+
+    // Create checkout session for one-time payment
     const checkoutSession = await stripe.checkout.sessions.create({
       customer: customerId,
       line_items: [
         {
-          price: process.env.STRIPE_PRICE_ID,
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: `${netCredits.toFixed(2)} AI Credits (after fee)`,
+            },
+            unit_amount: totalAmount, // in cents
+          },
           quantity: 1,
         },
       ],
-      mode: "subscription",
+      mode: "payment",
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings?success=true`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings?canceled=true`,
       metadata: {
         userId: user.id,
+        credits: creditsToBuy,
+        netCredits: netCredits.toFixed(2),
+        fee: fee.toFixed(2),
+        amount: amount.toFixed(2),
       },
     });
 

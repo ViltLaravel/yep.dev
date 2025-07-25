@@ -16,6 +16,7 @@ model User {
   image             String?
   isSubscribed      Boolean        @default(false)
   stripeCustomerId  String?
+  credits           Float          @default(0)
 
   // OAuth provider fields
   provider          String?        // "google", "github", "credentials"
@@ -83,4 +84,9 @@ model File {
   projectId  String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+}
+
+model ProcessedEvent {
+  eventId   String   @id
+  createdAt DateTime @default(now())
 }

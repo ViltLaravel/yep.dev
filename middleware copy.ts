@@ -2,7 +2,7 @@ import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
 // Add paths that should be accessible without authentication
-const publicPaths = ["/login", "/register", "/api/auth", "/api/register", "/api/stripe/webhook"];
+const publicPaths = ["/login", "/register", "/api/auth", "/api/register"];
 
 const authRedirectPaths = ["/login", "/register"];
 

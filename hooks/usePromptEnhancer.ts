@@ -1,6 +1,5 @@
 'use client';
 
-import { getAllApiKeysFromStorage } from '@/lib/api-keys';
 import { DEFAULT_PROVIDER } from '@/lib/provider';
 import { useState } from 'react';
 
@@ -24,13 +23,11 @@ export function usePromptEnhancer() {
     setPromptEnhanced(false);
 
     // Get API keys from localStorage
-    const apiKeys = getAllApiKeysFromStorage();
-
     const requestBody = {
       message: input,
       model,
       provider: DEFAULT_PROVIDER,
-      apiKeys,
+      // No user API keys, server will use its own managed key
     };
 
     try {

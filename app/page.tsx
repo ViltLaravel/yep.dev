@@ -7,7 +7,6 @@ import { Icons } from "@/components/ui/icons";
 import { Textarea } from "@/components/ui/textarea";
 import { UploadedImage, useImageUpload } from "@/hooks/useImageUpload";
 import { usePromptEnhancer } from "@/hooks/usePromptEnhancer";
-import { getAllApiKeysFromStorage } from "@/lib/api-keys";
 import {
   DEFAULT_MODEL,
   DEFAULT_TEMPLATE,
@@ -29,13 +28,13 @@ import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
-import { APIKeyManager } from "../components/APIKeyManager";
 import { ModelSelector } from "./components/chat/ModelSelector";
 import { UpgradeDialog } from "./components/UpgradeDialog";
 
 function Chat() {
   const { data: session, status } = useSession();
-  const [apiKeys, setApiKeys] = useState<Record<string, string>>();
+  const [creditBalance, setCreditBalance] = useState<number | null>(null);
+  const [loadingCredits, setLoadingCredits] = useState(false);
   const [modelList, setModelList] = useState<ModelInfo[]>(
     DEFAULT_PROVIDER.staticModels
   );
@@ -68,25 +67,26 @@ function Chat() {
   });
 
   // Check for returnPrompt URL parameter and pre-fill prompt
-  const [prompt, setPrompt] = useState("");
+  const [userPrompt, setUserPrompt] = useState("");
   const { enhancePrompt, enhancingPrompt } = usePromptEnhancer();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isStarterLoading, setIsStarterLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
       const returnPrompt = urlParams.get("returnPrompt");
-      if (returnPrompt && !prompt) {
-        setPrompt(decodeURIComponent(returnPrompt));
+      if (returnPrompt && !userPrompt) {
+        setUserPrompt(decodeURIComponent(returnPrompt));
         // Clean up URL by removing the parameter
         const url = new URL(window.location.href);
         url.searchParams.delete("returnPrompt");
         window.history.replaceState({}, document.title, url.pathname);
       }
     }
-  }, [status, prompt]);
+  }, [status, userPrompt]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -106,29 +106,37 @@ function Chat() {
     }
   }, []);
 
-  const router = useRouter();
+  // Removed all usages of getAllApiKeysFromStorage and APIKeyManager
 
-  // Load API keys from localStorage
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const keys = getAllApiKeysFromStorage(session?.user?.id || null);
-      setApiKeys(keys);
-    }
-  }, [session?.user?.id]);
-
-  const handleApiKeyChange = useCallback(
-    (hasValidKey: boolean) => {
-      setHasValidApiKey(hasValidKey);
-      setIsLoadingApiKey(false);
-
-      // Reload API keys when they change
-      if (typeof window !== "undefined") {
-        const keys = getAllApiKeysFromStorage(session?.user?.id || null);
-        setApiKeys(keys);
+    async function fetchCredits() {
+      if (session?.user?.email) {
+        setLoadingCredits(true);
+        const res = await fetch("/api/user/credits");
+        if (res.ok) {
+          const data = await res.json();
+          setCreditBalance(data.credits);
+        }
+        setLoadingCredits(false);
       }
-    },
-    [session?.user?.id]
-  );
+    }
+    fetchCredits();
+  }, [session?.user?.email]);
+
+  const handleBuyCredits = async () => {
+    const credits = prompt("How many credits do you want to purchase?");
+    const creditsNum = Number(credits);
+    if (!creditsNum || creditsNum <= 0) return;
+    const res = await fetch("/api/stripe/create-checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ credits: creditsNum }),
+    });
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    }
+  };
 
   const removeImage = (index: number) => {
     setUploadedImages((prev) => prev.filter((_, i) => i !== index));
@@ -136,7 +144,7 @@ function Chat() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const trimmedPrompt = prompt.trim();
+    const trimmedPrompt = userPrompt.trim();
     if (!trimmedPrompt) return;
 
     // Check if user is authenticated before checking API key
@@ -147,10 +155,7 @@ function Chat() {
       return;
     }
 
-    if (!hasValidApiKey) {
-      alert("Please configure your OpenRouter API key first.");
-      return;
-    }
+    // Removed API key check
 
     setIsStarterLoading(true);
 
@@ -222,7 +227,7 @@ function Chat() {
       console.error("Error initiating chat:", error);
     } finally {
       setIsStarterLoading(false);
-      setPrompt("");
+      setUserPrompt("");
       setUploadedImages([]);
     }
   };
@@ -341,6 +346,12 @@ function Chat() {
         {status === "authenticated" && (
           <div className="flex items-center gap-4">
             <div className="text-sm">{session?.user?.email}</div>
+            <div className="text-sm">
+              Credits: {loadingCredits ? "..." : creditBalance ?? 0}
+              <button className="ml-2 px-2 py-1 bg-blue-600 rounded text-white" onClick={handleBuyCredits}>
+                Buy Credits
+              </button>
+            </div>
             <Button
               className="border border-[#313133] rounded-xl bg-[#161618] shadow-sm p-3"
               variant="outline"
@@ -374,9 +385,21 @@ function Chat() {
         <div className="w-full pt-4">
           <form
             onSubmit={handleSubmit}
-            className=" rounded-xl bg-[#161618] shadow-sm p-3"
+            className="border border-[#313133] rounded-xl bg-[#161618] shadow-sm p-3"
           >
-            <div className="shadow-sm">
+            <div className="pb-3">
+              <ModelSelector
+                model={model}
+                setModel={setModel}
+                modelList={modelList}
+                apiKeys={{}}
+                modelLoading={isModelLoading}
+              />
+            </div>
+
+            {/* Remove all usages of getAllApiKeysFromStorage and APIKeyManager */}
+
+            <div className="border border-[#313133] rounded-xl bg-[#161618] shadow-sm">
               {/* Image preview area */}
               {uploadedImages.length > 0 && (
                 <div className="mb-3 p-3 bg-[#1a1a1c] rounded-lg border border-[#313133]">
@@ -412,12 +435,12 @@ function Chat() {
                 </div>
               )}
 
-              <div className="p-3">
+              <div className="p-3 relative">
                 <Textarea
                   ref={textareaRef}
                   placeholder="An app that helps me plan my day"
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
+                  value={userPrompt}
+                  onChange={(e) => setUserPrompt(e.target.value)}
                   onPaste={async (event) => {
                     const items = event.clipboardData?.items;
                     if (!items) return;
@@ -452,7 +475,38 @@ function Chat() {
                       handleSubmit(e);
                     }
                   }}
+                  disabled={creditBalance !== null && creditBalance <= 0}
                 />
+                {(userPrompt.length > 0 || isStarterLoading) && (
+                  <div className="absolute top-3 right-3">
+                    <Button
+                      type="submit"
+                      size="icon"
+                      className="h-10 w-10 rounded-full bg-blue-500 hover:bg-blue-600"
+                      disabled={
+                        isStarterLoading || enhancingPrompt || !userPrompt.trim() || (creditBalance !== null && creditBalance <= 0)
+                      }
+                    >
+                      {isStarterLoading ? (
+                        <Icons.spinner className="w-5 h-5 text-[#101012] animate-spin" />
+                      ) : (
+                        <ArrowUp className="w-5 h-5 text-[#101012]" />
+                      )}
+                    </Button>
+                  </div>
+                )}
+                {creditBalance !== null && creditBalance <= 0 && (
+                  <div className="mt-2 text-red-500 text-sm flex items-center gap-2">
+                    You have 0 credits. 
+                    <Button
+                      className="ml-2 px-2 py-1 bg-blue-600 rounded text-white"
+                      onClick={handleBuyCredits}
+                      size="sm"
+                    >
+                      Buy Credits
+                    </Button>
+                  </div>
+                )}
               </div>
 
               {/* Hidden file input */}
@@ -464,8 +518,8 @@ function Chat() {
                 className="hidden"
               />
 
-              <div className="flex justify-between items-center p-3 mt-4">
-                <div className="flex justify-start items-center gap-3">
+              <div className="flex justify-start p-3 mt-4">
+                <div className="flex items-center gap-3">
                   <Button
                     size="icon"
                     variant="ghost"
@@ -482,8 +536,8 @@ function Chat() {
                   <button
                     type="button"
                     className="text-gray-400 hover:text-gray-300 transition-colors cursor-pointer disabled:opacity-50"
-                    onClick={() => enhancePrompt(prompt, setPrompt, model)}
-                    disabled={enhancingPrompt || prompt.length === 0}
+                    onClick={() => enhancePrompt(userPrompt, setUserPrompt, model)}
+                    disabled={enhancingPrompt || userPrompt.length === 0}
                   >
                     <Icons.sparkles
                       className={`w-4 h-4 ${
@@ -519,29 +573,6 @@ function Chat() {
                     </div>
                   </button>
                 </div>
-                <div className={`flex justify-end`}>
-                  <Button
-                    type="submit"
-                    size="icon"
-                    className={`h-10 w-10 rounded-xl hover:bg-[#242427] ${
-                      prompt.length > 0 && "bg-[#242427]"
-                    }`}
-                    disabled={
-                      isStarterLoading || enhancingPrompt || !prompt.trim()
-                    }
-                  >
-                    {isStarterLoading ? (
-                      <Icons.spinner className="w-5 h-5 text-[#101012] animate-spin" />
-                    ) : (
-                      <Send
-                        className={`w-4 h-4  hover:text-gray-300 transition-colors cursor-pointer disabled:opacity-50  ${
-                          prompt.length > 0 ||
-                          (isStarterLoading ? "text-gray-300" : "text-gray-400")
-                        }`}
-                      />
-                    )}
-                  </Button>
-                </div>
               </div>
             </div>
           </form>
@@ -559,7 +590,7 @@ function Chat() {
                     const encodedPrompt = encodeURIComponent(example);
                     router.push(`/login?returnPrompt=${encodedPrompt}`);
                   } else {
-                    setPrompt(example);
+                    setUserPrompt(example);
                   }
                 }}
               >

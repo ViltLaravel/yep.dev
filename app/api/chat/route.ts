@@ -1,4 +1,4 @@
-import { getApiKeysFromRequest } from '@/lib/api-keys';
+// import { getApiKeysFromRequest } from '@/lib/api-keys';
 import { MAX_TOKENS_NO_SUMMARY } from '@/lib/constants';
 import { CONTINUE_PROMPT, WORK_DIR } from '@/lib/prompt';
 import { createSummary } from '@/lib/server/create-summary';
@@ -10,6 +10,9 @@ import { addMessage, getConversation } from '@/lib/services/conversationService'
 import { countMessageTokens } from '@/lib/tokenizer';
 import type { ContextAnnotation, FileMap, IProviderSetting, ProgressAnnotation } from '@/lib/types/index';
 import { createDataStream, generateId } from 'ai';
+import { getServerSession } from 'next-auth/next';
+import { db } from '@/lib/db';
+import { authOptions } from '@/lib/auth';
 
 const MAX_RESPONSE_SEGMENTS = 10;
 const MAX_TOKENS = 65536;
@@ -34,6 +37,19 @@ function parseCookies(cookieHeader: string): Record<string, string> {
 
 export async function POST(request: Request) {
   try {
+    // Authenticate user and check credits
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+    }
+    const user = await db.user.findUnique({ where: { email: session.user.email } });
+    if (!user) {
+      return new Response(JSON.stringify({ error: 'User not found' }), { status: 404 });
+    }
+    if (user.credits <= 0) {
+      return new Response(JSON.stringify({ error: 'Insufficient credits' }), { status: 402 });
+    }
+
     const requestData = await request.json();
     const { messages, files, promptId, contextOptimization, conversationId, selectedModel, apiKeys: clientApiKeys } = requestData as {
       messages: Messages;
@@ -107,9 +123,6 @@ export async function POST(request: Request) {
     }
 
     const cookieHeader = request.headers.get('Cookie');
-
-    // Get API keys from client request
-    const apiKeys = getApiKeysFromRequest(clientApiKeys);
 
     const providerSettings: Record<string, IProviderSetting> = JSON.parse(
       parseCookies(cookieHeader || '').providers || '{}',
@@ -198,7 +211,7 @@ export async function POST(request: Request) {
             summary = await createSummary({
               messages: [...messages],
               env: process.env,
-              apiKeys,
+              apiKeys: {}, // No longer supported
               providerSettings,
               promptId,
               contextOptimization,
@@ -237,7 +250,7 @@ export async function POST(request: Request) {
           filteredFiles = await selectContext({
             messages: [...messages],
             env: process.env,
-            apiKeys,
+            apiKeys: {}, // No longer supported
             files,
             providerSettings,
             promptId,
@@ -336,7 +349,7 @@ export async function POST(request: Request) {
               messages,
               env: process.env,
               options,
-              apiKeys,
+              apiKeys: {}, // No longer supported
               files,
               providerSettings,
               promptId,
@@ -376,7 +389,7 @@ export async function POST(request: Request) {
           messages,
           env: process.env,
           options,
-          apiKeys,
+          apiKeys: {}, // No longer supported
           files,
           providerSettings,
           promptId,

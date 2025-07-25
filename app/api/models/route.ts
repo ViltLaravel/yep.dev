@@ -5,19 +5,12 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    const cookieStore = cookies();
-    const apiKeysJson = cookieStore.get('apiKeys')?.value;
-    const providerSettingsJson = cookieStore.get('providerSettings')?.value;
-
-    const apiKeys = apiKeysJson ? JSON.parse(apiKeysJson) : {};
-    const providerSettings = providerSettingsJson ? JSON.parse(providerSettingsJson) : {};
-
     const manager = LLMManager.getInstance();
+    // Always use server-managed OpenRouter API key
     const modelList = await manager.updateModelList({
-      apiKeys,
-      providerSettings,
+      apiKeys: { OpenRouter: process.env.OPENROUTER_API_KEY },
+      providerSettings: {},
     });
-
     return NextResponse.json({ modelList });
   } catch (error) {
     console.error('Error fetching models:', error);
