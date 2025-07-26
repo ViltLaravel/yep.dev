@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { hash } from "bcrypt";
+import { hash } from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 

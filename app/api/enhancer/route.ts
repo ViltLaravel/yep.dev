@@ -120,10 +120,26 @@ export async function POST(request: NextRequest) {
             totalTokensUsed = 100;
           }
           const cost = totalTokensUsed * pricePerToken;
-          await db.user.update({
-            where: { id: user.id },
-            data: { credits: { decrement: cost } },
-          });
+          console.log('[CREDIT DEDUCTION DEBUG] ==========================================');
+          console.log('[CREDIT DEDUCTION DEBUG] User ID:', user.id);
+          console.log('[CREDIT DEDUCTION DEBUG] User email:', user.email);
+          console.log('[CREDIT DEDUCTION DEBUG] Credits BEFORE deduction:', user.credits);
+          console.log('[CREDIT DEDUCTION DEBUG] Model used:', model);
+          console.log('[CREDIT DEDUCTION DEBUG] Total tokens used:', totalTokensUsed);
+          console.log('[CREDIT DEDUCTION DEBUG] Price per token:', pricePerToken);
+          console.log('[CREDIT DEDUCTION DEBUG] Cost to deduct:', cost);
+          try {
+            const updateResult = await db.user.update({
+              where: { id: user.id },
+              data: { credits: { decrement: cost } },
+            });
+            console.log('[CREDIT DEDUCTION DEBUG] Credits AFTER deduction:', updateResult.credits);
+            console.log('[CREDIT DEDUCTION DEBUG] db.user.update result:', updateResult);
+            console.log('[CREDIT DEDUCTION DEBUG] ==========================================');
+          } catch (deductError) {
+            console.error('[CREDIT DEDUCTION DEBUG] Error updating user credits:', deductError);
+            console.log('[CREDIT DEDUCTION DEBUG] ==========================================');
+          }
         }
       }
     });
