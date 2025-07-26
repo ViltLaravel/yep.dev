@@ -23,17 +23,17 @@ export async function POST(req: Request) {
       return new NextResponse("Webhook signature verification failed", { status: 400 });
     }
 
-    console.log("Received event:", event.type);
+    // console.log("Received event:", event.type);
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session;
       const userId = session.metadata?.userId;
       const netCredits = Number(session.metadata?.netCredits);
       const eventId = event.id;
-      console.log("Session metadata:", session.metadata);
+      // console.log("Session metadata:", session.metadata);
       // Idempotency: check if this event was already processed
       const alreadyProcessed = await prisma.processedEvent.findUnique({ where: { eventId } });
       if (alreadyProcessed) {
-        console.log("Event already processed, skipping:", eventId);
+        // console.log("Event already processed, skipping:", eventId);
         return new NextResponse(null, { status: 200 });
       }
       if (!userId || !netCredits || netCredits <= 0) {
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
         });
         // Mark event as processed
         await prisma.processedEvent.create({ data: { eventId } });
-        console.log("Credits updated for user:", updatedUser.id, "New credits:", updatedUser.credits);
+        // console.log("Credits updated for user:", updatedUser.id, "New credits:", updatedUser.credits);
       } catch (err) {
         console.error("Failed to update user credits:", err);
         return new NextResponse("Failed to update credits", { status: 500 });
@@ -73,7 +73,7 @@ export async function POST(req: Request) {
             isSubscribed: false,
           },
         });
-        console.log("Subscription deleted, user updated:", user.id);
+        // console.log("Subscription deleted, user updated:", user.id);
       }
     }
     return new NextResponse(null, { status: 200 });

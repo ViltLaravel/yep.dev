@@ -211,7 +211,7 @@ export async function POST(request: Request) {
             summary = await createSummary({
               messages: [...messages],
               env: process.env,
-              apiKeys: {}, // No longer supported
+              apiKeys: { OpenRouter: process.env.OPENROUTER_API_KEY },
               providerSettings,
               promptId,
               contextOptimization,
@@ -250,7 +250,7 @@ export async function POST(request: Request) {
           filteredFiles = await selectContext({
             messages: [...messages],
             env: process.env,
-            apiKeys: {}, // No longer supported
+            apiKeys: { OpenRouter: process.env.OPENROUTER_API_KEY },
             files,
             providerSettings,
             promptId,
@@ -349,7 +349,7 @@ export async function POST(request: Request) {
               messages,
               env: process.env,
               options,
-              apiKeys: {}, // No longer supported
+              apiKeys: { OpenRouter: process.env.OPENROUTER_API_KEY },
               files,
               providerSettings,
               promptId,
@@ -389,7 +389,7 @@ export async function POST(request: Request) {
           messages,
           env: process.env,
           options,
-          apiKeys: {}, // No longer supported
+          apiKeys: { OpenRouter: process.env.OPENROUTER_API_KEY },
           files,
           providerSettings,
           promptId,
