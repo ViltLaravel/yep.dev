@@ -6,12 +6,17 @@ const nextConfig = {
     reactStrictMode: true,
 
     images: {
-        domains: ['localhost'],
+        domains: ['localhost', 'yep-dev-staging.vercel.app'],
         remotePatterns: [
             {
                 protocol: 'http',
                 hostname: 'localhost',
                 port: '3000',
+                pathname: '/api/images/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'yep-dev-staging.vercel.app',
                 pathname: '/api/images/**',
             },
         ],
