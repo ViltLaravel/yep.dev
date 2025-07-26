@@ -101,7 +101,7 @@ export const authOptions: NextAuthOptions = {
       // Return previous token if the user hasn't changed
       const dbUser = await db.user.findFirst({
         where: {
-          email: token.email,
+          email: token.email ?? '',
         },
       });
 

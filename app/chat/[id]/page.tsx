@@ -40,7 +40,7 @@ function Workspace() {
 
   const params = useParams();
   // const searchParams = useSearchParams();
-  const conversationId = typeof params.id === "string" ? params.id : "";
+  const conversationId = typeof params?.id === "string" ? params?.id : "";
 
   // Initialize with defaults - will be updated when conversation loads
   const [templateName, setTemplateName] = useState(DEFAULT_TEMPLATE.name);

@@ -22,6 +22,7 @@ import { usePathname, useRouter } from "next/navigation";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { NavUser } from "./nav-user";
+import { HomeIcon } from "lucide-react";
 
 // This is sample data
 const data = {
@@ -41,7 +42,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [isLoading, setIsLoading] = useState(true);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
   const pathname = usePathname();
-  const activeId = pathname.split("/").pop();
+  const activeId = pathname?.split("/").pop();
 
   useEffect(() => {
     async function fetchConversations() {
@@ -95,7 +96,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarFooter>
           <SidebarMenu>
             {data.navMain.map((item) => (
-              <SidebarMenuItem key={item.title}>
+              <SidebarMenuItem key={item?.title ?? ''}>
                 <SidebarMenuButton
                   size="lg"
                   onClick={() => {

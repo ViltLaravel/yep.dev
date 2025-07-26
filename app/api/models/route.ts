@@ -8,7 +8,7 @@ export async function GET() {
     const manager = LLMManager.getInstance();
     // Always use server-managed OpenRouter API key
     const modelList = await manager.updateModelList({
-      apiKeys: { OpenRouter: process.env.OPENROUTER_API_KEY },
+      apiKeys: { OpenRouter: process.env.OPENROUTER_API_KEY ?? '' },
       providerSettings: {},
     });
     return NextResponse.json({ modelList });

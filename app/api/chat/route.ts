@@ -211,7 +211,7 @@ export async function POST(request: Request) {
             summary = await createSummary({
               messages: [...messages],
               env: process.env,
-              apiKeys: { OpenRouter: process.env.OPENROUTER_API_KEY },
+              apiKeys: { OpenRouter: process.env.OPENROUTER_API_KEY ?? '' },
               providerSettings,
               promptId,
               contextOptimization,
@@ -250,7 +250,7 @@ export async function POST(request: Request) {
           filteredFiles = await selectContext({
             messages: [...messages],
             env: process.env,
-            apiKeys: { OpenRouter: process.env.OPENROUTER_API_KEY },
+            apiKeys: { OpenRouter: process.env.OPENROUTER_API_KEY ?? '' },
             files,
             providerSettings,
             promptId,
@@ -349,7 +349,7 @@ export async function POST(request: Request) {
               messages,
               env: process.env,
               options,
-              apiKeys: { OpenRouter: process.env.OPENROUTER_API_KEY },
+              apiKeys: { OpenRouter: process.env.OPENROUTER_API_KEY ?? '' },
               files,
               providerSettings,
               promptId,
@@ -389,7 +389,7 @@ export async function POST(request: Request) {
           messages,
           env: process.env,
           options,
-          apiKeys: { OpenRouter: process.env.OPENROUTER_API_KEY },
+          apiKeys: { OpenRouter: process.env.OPENROUTER_API_KEY ?? ''},
           files,
           providerSettings,
           promptId,
@@ -443,9 +443,9 @@ export async function POST(request: Request) {
       const cost = totalTokensUsed * pricePerToken;
       
       console.log('[CREDIT DEDUCTION DEBUG] ==========================================');
-      console.log('[CREDIT DEDUCTION DEBUG] User ID:', user.id);
-      console.log('[CREDIT DEDUCTION DEBUG] User email:', user.email);
-      console.log('[CREDIT DEDUCTION DEBUG] Credits BEFORE deduction:', user.credits);
+      console.log('[CREDIT DEDUCTION DEBUG] User ID:', user?.id ?? '');
+      console.log('[CREDIT DEDUCTION DEBUG] User email:', user?.email ?? '');
+      console.log('[CREDIT DEDUCTION DEBUG] Credits BEFORE deduction:', user?.credits ?? 0);
       console.log('[CREDIT DEDUCTION DEBUG] Model used:', model);
       console.log('[CREDIT DEDUCTION DEBUG] Total tokens used:', totalTokensUsed);
       console.log('[CREDIT DEDUCTION DEBUG] Price per token:', pricePerToken);
@@ -453,7 +453,7 @@ export async function POST(request: Request) {
       
       if (cost > 0) {
         const updateResult = await db.user.update({
-          where: { id: user.id },
+          where: { id: user?.id ?? '' },
           data: { credits: { decrement: cost } },
         });
         console.log('[CREDIT DEDUCTION DEBUG] Credits AFTER deduction:', updateResult.credits);
