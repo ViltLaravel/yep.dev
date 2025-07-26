@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { UpgradeDialog } from "@/app/components/UpgradeDialog";
@@ -53,10 +54,11 @@ function Workspace() {
   // const modelFromUrl = searchParams.get("model");
 
   const template =
-    STARTER_TEMPLATES.find((t) => t.name === templateName) ||
-    DEFAULT_TEMPLATE;
+    STARTER_TEMPLATES.find((t) => t.name === templateName) || DEFAULT_TEMPLATE;
 
-  const [conversationMessages, setConversationMessages] = useState<Message[]>([]);
+  const [conversationMessages, setConversationMessages] = useState<Message[]>(
+    []
+  );
   const [conversationLoaded, setConversationLoaded] = useState(false);
   const [installSequenceTriggered, setInstallSequenceTriggered] =
     useState(false);
@@ -66,7 +68,9 @@ function Workspace() {
     useState(false);
   const [initialStreamCompleted, setInitialStreamCompleted] = useState(false);
   const [showErrorNotification, setShowErrorNotification] = useState(false);
-  const [errorNotificationDetails, setErrorNotificationDetails] = useState<string | null>(null);
+  const [errorNotificationDetails, setErrorNotificationDetails] = useState<
+    string | null
+  >(null);
   const [selectedModel, setSelectedModel] = useState<string | undefined>();
   const [projectId, setProjectId] = useState<string | null>(null);
   const [isCreatingProject, setIsCreatingProject] = useState(false);
@@ -151,7 +155,12 @@ function Workspace() {
   // Load conversation
   useEffect(() => {
     async function loadConversation() {
-      if (!conversationId || status !== "authenticated" || conversationDataFetchedRef.current) return;
+      if (
+        !conversationId ||
+        status !== "authenticated" ||
+        conversationDataFetchedRef.current
+      )
+        return;
 
       conversationDataFetchedRef.current = true;
       try {
@@ -178,7 +187,9 @@ function Workspace() {
             (m: Message) => m.role === "assistant"
           );
           if (assistantMessages.length > 0) {
-            console.log(`Loaded ${assistantMessages.length} assistant messages from conversation`);
+            console.log(
+              `Loaded ${assistantMessages.length} assistant messages from conversation`
+            );
           }
 
           // Extract metadata from conversation
@@ -192,9 +203,10 @@ function Workspace() {
           if (conversation.messages.length > 0) {
             const firstMessage = conversation.messages[0];
             if (firstMessage.role === "user") {
-              const promptText = typeof firstMessage.content === "string"
-                ? firstMessage.content
-                : firstMessage.content.find(c => c.type === "text")?.text;
+              const promptText =
+                typeof firstMessage.content === "string"
+                  ? firstMessage.content
+                  : firstMessage.content.find((c) => c.type === "text")?.text;
               if (promptText) {
                 setInitialPrompt(promptText);
               }
@@ -205,7 +217,6 @@ function Workspace() {
           if (conversation.messages.length === 0) {
             setShouldLoadTemplate(true);
           }
-
         } else {
           setShouldLoadTemplate(true);
         }
@@ -214,7 +225,8 @@ function Workspace() {
         console.error("Error loading conversation:", error);
         setShouldLoadTemplate(true);
         setErrorNotificationDetails(
-          `Error loading conversation: ${error instanceof Error ? error.message : String(error)
+          `Error loading conversation: ${
+            error instanceof Error ? error.message : String(error)
           }`
         );
         setShowErrorNotification(true);
@@ -261,13 +273,18 @@ function Workspace() {
           }
         } else {
           // If fetching conversation fails, we can't proceed reliably.
-          console.error("Failed to fetch conversation details, cannot proceed with project creation check.", await response.text());
+          console.error(
+            "Failed to fetch conversation details, cannot proceed with project creation check.",
+            await response.text()
+          );
           return;
         }
 
         // Check module-level guard before attempting to create a new project
         if (projectCreationAttemptedForConversation.has(conversationId)) {
-          console.warn(`Project creation for conversation ${conversationId} already attempted in this session. Skipping.`);
+          console.warn(
+            `Project creation for conversation ${conversationId} already attempted in this session. Skipping.`
+          );
           return;
         }
         projectCreationAttemptedForConversation.add(conversationId); // Mark as attempted
@@ -276,7 +293,9 @@ function Workspace() {
         const createResponse = await fetch("/api/projects", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: `Project_${conversationId.slice(0, 8)}` }),
+          body: JSON.stringify({
+            name: `Project_${conversationId.slice(0, 8)}`,
+          }),
         });
 
         if (createResponse.ok) {
@@ -299,7 +318,10 @@ function Workspace() {
             projectCreationAttemptedForConversation.delete(conversationId); // Allow retry after upgrade
             return;
           }
-          console.error("Failed to create project:", errorData.error || 'Unknown error');
+          console.error(
+            "Failed to create project:",
+            errorData.error || "Unknown error"
+          );
           projectCreationAttemptedForConversation.delete(conversationId); // Allow retry on failure
         }
       } catch (error) {
@@ -310,14 +332,21 @@ function Workspace() {
       }
     };
 
-    if (!projectId && !projectInitializationDoneRef.current && !isCreatingProject) {
+    if (
+      !projectId &&
+      !projectInitializationDoneRef.current &&
+      !isCreatingProject
+    ) {
       if (session?.user?.id && conversationId) {
         getOrCreateProject();
       }
-    } else if (projectId && projectInitializationDoneRef.current && isCreatingProject) {
+    } else if (
+      projectId &&
+      projectInitializationDoneRef.current &&
+      isCreatingProject
+    ) {
       setIsCreatingProject(false);
     }
-
   }, [session?.user?.id, conversationId, projectId, isCreatingProject]);
 
   // Track if project files have been loaded to prevent reloading after AI updates
@@ -345,26 +374,35 @@ function Workspace() {
         }
 
         const projectData = await response.json();
-        if (projectData.project?.files && projectData.project.files.length > 0) {
+        if (
+          projectData.project?.files &&
+          projectData.project.files.length > 0
+        ) {
           let firstFileToSelect = null;
           let filesLoadedCount = 0;
 
           for (const file of projectData.project.files) {
             try {
-              const normalizedPath = file.path.startsWith('/') ? file.path : `/${file.path}`;
-              const fullPath = normalizedPath.startsWith('/home/project/')
+              const normalizedPath = file.path.startsWith("/")
+                ? file.path
+                : `/${file.path}`;
+              const fullPath = normalizedPath.startsWith("/home/project/")
                 ? normalizedPath
-                : `/home/project/${normalizedPath.replace(/^\//, '')}`;
+                : `/home/project/${normalizedPath.replace(/^\//, "")}`;
 
               if (file.content) {
-                await updateFileInWorkbench(fullPath, file.content, webContainerInstance);
+                await updateFileInWorkbench(
+                  fullPath,
+                  file.content,
+                  webContainerInstance
+                );
                 filesLoadedCount++;
 
                 // Prefer app files for selection
                 if (
-                  fullPath.includes('index.tsx') ||
-                  fullPath.includes('main.tsx') ||
-                  fullPath.includes('App.tsx')
+                  fullPath.includes("index.tsx") ||
+                  fullPath.includes("main.tsx") ||
+                  fullPath.includes("App.tsx")
                 ) {
                   firstFileToSelect = fullPath;
                 }
@@ -381,11 +419,12 @@ function Workspace() {
             }, 100); // Small delay to ensure store is updated
           }
 
-
           // Files loaded from database, don't need CloudFront template
           setShouldLoadTemplate(false);
         } else {
-          console.log("No project files found in database, will load CloudFront template");
+          console.log(
+            "No project files found in database, will load CloudFront template"
+          );
           setShouldLoadTemplate(true);
         }
 
@@ -403,7 +442,6 @@ function Workspace() {
     const timeoutId = setTimeout(loadProjectFiles, 500);
     return () => clearTimeout(timeoutId);
   }, [webContainerInstance, conversationLoaded, projectId]);
-
 
   // Handle Template Errors and Template Fallback
   useEffect(() => {
@@ -423,12 +461,7 @@ function Workspace() {
         setShowErrorNotification(true);
       }
     }
-  }, [
-    templateError,
-    template.name,
-    templateFallbackUsed,
-    conversationId,
-  ]);
+  }, [templateError, template.name, templateFallbackUsed, conversationId]);
 
   // Handle WebContainer Initialization Errors (e.g., dev server failed)
   useEffect(() => {
@@ -496,16 +529,29 @@ function Workspace() {
     async (command: string) => {
       if (runTerminalCommand && terminalStoreManager?.actions) {
         const devServerCommands = [
-          "npm run dev", "npm start", "npm run start",
-          "yarn dev", "yarn start",
-          "pnpm dev", "pnpm start",
-          "vite", "next dev", "ng serve", "astro dev"
+          "npm run dev",
+          "npm start",
+          "npm run start",
+          "yarn dev",
+          "yarn start",
+          "pnpm dev",
+          "pnpm start",
+          "vite",
+          "next dev",
+          "ng serve",
+          "astro dev",
         ];
-        const isDevServerCommand = devServerCommands.some(devCmd => command.startsWith(devCmd));
+        const isDevServerCommand = devServerCommands.some((devCmd) =>
+          command.startsWith(devCmd)
+        );
 
         // Helper to show skip message in terminal
         const showSkipMessageInTerminal = (reason: string) => {
-          terminalStoreManager.actions.setTerminalRunning("bolt", true, command); // Show the command that was attempted
+          terminalStoreManager.actions.setTerminalRunning(
+            "bolt",
+            true,
+            command
+          ); // Show the command that was attempted
           if (mainTerminalRef.current) {
             // Using ANSI escape codes for yellow text
             mainTerminalRef.current.writeToTerminal(`
@@ -520,15 +566,23 @@ function Workspace() {
           const currentPreviews = currentWorkbenchState.previews;
           const uiIsStartingInitialServer = isStartingDevServer; // Flag from useWebContainer for initial setup
 
-          console.log('[DevServerCheck] Attempting command:', command);
-          console.log('[DevServerCheck] isStartingDevServer (UI initial):', uiIsStartingInitialServer);
-          console.log('[DevServerCheck] Current Previews:', JSON.stringify(currentPreviews));
+          console.log("[DevServerCheck] Attempting command:", command);
+          console.log(
+            "[DevServerCheck] isStartingDevServer (UI initial):",
+            uiIsStartingInitialServer
+          );
+          console.log(
+            "[DevServerCheck] Current Previews:",
+            JSON.stringify(currentPreviews)
+          );
 
           // Check 1: Is any server already registered and fully ready in previews?
-          const anyServerReadyInPreviews = currentPreviews.some(p => p.ready);
+          const anyServerReadyInPreviews = currentPreviews.some((p) => p.ready);
           if (anyServerReadyInPreviews) {
-            const readyPreview = currentPreviews.find(p => p.ready); // For logging
-            const reason = `A development server is already active${readyPreview ? ` on port ${readyPreview.port}` : ''}.`;
+            const readyPreview = currentPreviews.find((p) => p.ready); // For logging
+            const reason = `A development server is already active${
+              readyPreview ? ` on port ${readyPreview.port}` : ""
+            }.`;
             console.log(`[DevServerCheck] Skipping: ${reason}`);
             showSkipMessageInTerminal(reason);
             return;
@@ -536,23 +590,33 @@ function Workspace() {
 
           // Check 2: Is the UI currently in the process of the *initial* server startup sequence?
           if (uiIsStartingInitialServer) {
-            const reason = 'The initial development server is currently starting.';
-            console.log(`[DevServerCheck] Skipping: ${reason} (isStartingDevServer is true).`);
+            const reason =
+              "The initial development server is currently starting.";
+            console.log(
+              `[DevServerCheck] Skipping: ${reason} (isStartingDevServer is true).`
+            );
             showSkipMessageInTerminal(reason);
             return;
           }
 
           // Check 3: Is the Bolt terminal itself already running a dev command?
           // This catches rapid AI commands for the same dev task before previews update.
-          const boltTerminalSession = terminalStoreManager.$store.get().sessions.bolt;
-          if (boltTerminalSession?.isRunningCommand &&
-            devServerCommands.some(devCmd => boltTerminalSession.currentCommand?.startsWith(devCmd))) {
+          const boltTerminalSession =
+            terminalStoreManager.$store.get().sessions.bolt;
+          if (
+            boltTerminalSession?.isRunningCommand &&
+            devServerCommands.some((devCmd) =>
+              boltTerminalSession.currentCommand?.startsWith(devCmd)
+            )
+          ) {
             const reason = `The terminal is already executing a development server command ('${boltTerminalSession.currentCommand}').`;
             console.log(`[DevServerCheck] Skipping: ${reason}`);
             showSkipMessageInTerminal(reason);
             return;
           }
-          console.log('[DevServerCheck] No active/starting server detected by guards. Proceeding with command.');
+          console.log(
+            "[DevServerCheck] No active/starting server detected by guards. Proceeding with command."
+          );
         }
 
         // Proceed with command execution if no guards prevented it
@@ -563,18 +627,23 @@ function Workspace() {
           console.error(`❌ Command failed: ${command}`, error);
           if (mainTerminalRef.current) {
             mainTerminalRef.current.writeToTerminal(`
-[31mError executing command "${command}": ${error instanceof Error ? error.message : String(error)}[0m
+[31mError executing command "${command}": ${
+              error instanceof Error ? error.message : String(error)
+            }[0m
 ❯ `);
           }
         } finally {
           terminalStoreManager.actions.setTerminalRunning("bolt", false);
         }
       } else {
-        console.error(`❌ Cannot execute command - missing dependencies. Command: ${command}`, {
-          runTerminalCommand: !!runTerminalCommand,
-          terminalStoreManager: !!terminalStoreManager,
-          terminalActions: !!terminalStoreManager?.actions,
-        });
+        console.error(
+          `❌ Cannot execute command - missing dependencies. Command: ${command}`,
+          {
+            runTerminalCommand: !!runTerminalCommand,
+            terminalStoreManager: !!terminalStoreManager,
+            terminalActions: !!terminalStoreManager?.actions,
+          }
+        );
         if (mainTerminalRef.current) {
           mainTerminalRef.current.writeToTerminal(`
 [31mSystem: Cannot execute command "${command}" due to missing internal dependencies.[0m
@@ -681,10 +750,10 @@ function Workspace() {
           (typeof msg.content === "string"
             ? msg.content.trim() === initialPrompt.trim()
             : msg.content.some(
-              (part) =>
-                part.type === "text" &&
-                part.text?.trim() === initialPrompt.trim()
-            ))
+                (part) =>
+                  part.type === "text" &&
+                  part.text?.trim() === initialPrompt.trim()
+              ))
       );
 
       const hasUserMessage = userMessageIndex !== -1;
@@ -725,12 +794,12 @@ function Workspace() {
       // Check if the conversation has an initial message with images
       let imagesToSend:
         | Array<{
-          url: string;
-          signUrl: string;
-          filename: string;
-          size: number;
-          type: string;
-        }>
+            url: string;
+            signUrl: string;
+            filename: string;
+            size: number;
+            type: string;
+          }>
         | undefined;
 
       if (conversationMessages.length > 0) {
@@ -819,7 +888,10 @@ function Workspace() {
   useEffect(() => {
     // If there's an error and we're stuck in submission state, force the prompt as submitted
     if (openRouterError && !promptSubmitted) {
-      console.log('OpenRouter error detected, setting promptSubmitted to true:', openRouterError);
+      console.log(
+        "OpenRouter error detected, setting promptSubmitted to true:",
+        openRouterError
+      );
       setPromptSubmitted(true);
       setIsSubmittingInitialPrompt(false);
     }
@@ -832,7 +904,7 @@ function Workspace() {
 
     if (isSubmittingInitialPrompt) {
       timeoutId = setTimeout(() => {
-        console.log('Initial prompt submission timeout, forcing completion');
+        console.log("Initial prompt submission timeout, forcing completion");
         setIsSubmittingInitialPrompt(false);
         setPromptSubmitted(true);
       }, 30000); // 30 second timeout
@@ -866,26 +938,41 @@ function Workspace() {
     };
 
     const handleRequestDevServer = async (event: CustomEvent) => {
-      const reason = event.detail?.reason || 'manual_request';
+      const reason = event.detail?.reason || "manual_request";
       console.log(`[RequestDevServer] Request received: ${reason}`);
 
       // Check if we have files but no preview server
       const currentPreviews = $workbench.get().previews;
-      const hasNoActiveServer = !currentPreviews.some(p => p.ready);
+      const hasNoActiveServer = !currentPreviews.some((p) => p.ready);
 
-      if (hasNoActiveServer && webContainerInstance && Object.keys(filesFromStore).length > 0) {
-        console.log('[RequestDevServer] No active server found, attempting to start dev server');
+      if (
+        hasNoActiveServer &&
+        webContainerInstance &&
+        Object.keys(filesFromStore).length > 0
+      ) {
+        console.log(
+          "[RequestDevServer] No active server found, attempting to start dev server"
+        );
 
         // Try to start the dev server manually
         if (runTerminalCommand && terminalStoreManager?.actions) {
           try {
-            terminalStoreManager.actions.setTerminalRunning("bolt", true, "npm run dev");
+            terminalStoreManager.actions.setTerminalRunning(
+              "bolt",
+              true,
+              "npm run dev"
+            );
             await runTerminalCommand("npm run dev", "bolt");
           } catch (error) {
-            console.error('[RequestDevServer] Failed to start dev server:', error);
+            console.error(
+              "[RequestDevServer] Failed to start dev server:",
+              error
+            );
             if (mainTerminalRef.current) {
               mainTerminalRef.current.writeToTerminal(`
-[31mError starting dev server: ${error instanceof Error ? error.message : String(error)}[0m
+[31mError starting dev server: ${
+                error instanceof Error ? error.message : String(error)
+              }[0m
 ❯ `);
             }
           } finally {
@@ -899,10 +986,19 @@ function Workspace() {
     window.addEventListener("requestDevServer", handleRequestDevServer);
 
     return () => {
-      window.removeEventListener("forcePreviewRefresh", handleForcePreviewRefresh);
+      window.removeEventListener(
+        "forcePreviewRefresh",
+        handleForcePreviewRefresh
+      );
       window.removeEventListener("requestDevServer", handleRequestDevServer);
     };
-  }, [webContainerInstance, filesFromStore, runTerminalCommand, terminalStoreManager, mainTerminalRef]);
+  }, [
+    webContainerInstance,
+    filesFromStore,
+    runTerminalCommand,
+    terminalStoreManager,
+    mainTerminalRef,
+  ]);
 
   useEffect(() => {
     if (
@@ -930,12 +1026,11 @@ function Workspace() {
     return <LoadingOverlay error={null} />;
   }
 
-  const shouldShowLoadingOverlay = (
+  const shouldShowLoadingOverlay =
     Object.keys(filesFromStore).length === 0 &&
     !showErrorNotification &&
     !conversationLoaded &&
-    !projectId
-  );
+    !projectId;
 
   if (shouldShowLoadingOverlay) {
     return <LoadingOverlay error={null} />;
@@ -948,10 +1043,10 @@ function Workspace() {
           <h1 className="text-2xl font-bold mb-4 text-white">Yep Chat Bot</h1>
           <p className="text-gray-500">Processing message...</p>
           {/* Add debug info for troubleshooting */}
-          {process.env.NODE_ENV === 'development' && (
+          {process.env.NODE_ENV === "development" && (
             <div className="mt-4 text-xs text-gray-600">
               <p>promptSubmitted: {String(promptSubmitted)}</p>
-              <p>openRouterError: {openRouterError ? 'YES' : 'NO'}</p>
+              <p>openRouterError: {openRouterError ? "YES" : "NO"}</p>
               <p>showErrorNotification: {String(showErrorNotification)}</p>
               <p>messages.length: {messages.length}</p>
               <p>sendFirst: {String(sendFirst)}</p>

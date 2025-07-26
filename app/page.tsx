@@ -18,18 +18,35 @@ import { cn } from "@/lib/utils";
 import Cookies from "js-cookie";
 import {
   ArrowUp,
+  Coins,
   Image as ImageIcon,
   Loader2,
+  LogOut,
   LucideArrowRight,
-  Send,
+  LucideMenu,
+  Sparkle,
+  User,
   X,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { ModelSelector } from "./components/chat/ModelSelector";
 import { UpgradeDialog } from "./components/UpgradeDialog";
+import Navbar from "@/components/NavBar";
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 function Chat() {
   const { data: session, status } = useSession();
@@ -39,19 +56,12 @@ function Chat() {
     DEFAULT_PROVIDER.staticModels
   );
   const [showingError, setShowingError] = useState(false);
-  const {
-    uploadImage,
-    uploadFromClipboard,
-    isUploading,
-    uploadError,
-    clearError,
-  } = useImageUpload();
+  const { uploadImage, isUploading, uploadError, clearError } =
+    useImageUpload();
   const [isModelLoading, setIsModelLoading] = useState<string | undefined>(
     "all"
   );
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
-  const [hasValidApiKey, setHasValidApiKey] = useState(false);
-  const [isLoadingApiKey, setIsLoadingApiKey] = useState(true);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
   const [webSearchEnabled, setWebSearchEnabled] = useState(() => {
     if (typeof window !== "undefined") {
@@ -73,6 +83,7 @@ function Chat() {
   const [isStarterLoading, setIsStarterLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -80,7 +91,6 @@ function Chat() {
       const returnPrompt = urlParams.get("returnPrompt");
       if (returnPrompt && !userPrompt) {
         setUserPrompt(decodeURIComponent(returnPrompt));
-        // Clean up URL by removing the parameter
         const url = new URL(window.location.href);
         url.searchParams.delete("returnPrompt");
         window.history.replaceState({}, document.title, url.pathname);
@@ -105,8 +115,6 @@ function Chat() {
         });
     }
   }, []);
-
-  // Removed all usages of getAllApiKeysFromStorage and APIKeyManager
 
   useEffect(() => {
     async function fetchCredits() {
@@ -154,8 +162,6 @@ function Chat() {
       router.push(`/login?returnPrompt=${encodedPrompt}`);
       return;
     }
-
-    // Removed API key check
 
     setIsStarterLoading(true);
 
@@ -240,12 +246,6 @@ function Chat() {
     "Job board with Express and MongoDB",
   ];
 
-  const handleModelChange = (newModel: string) => {
-    const baseModel = newModel.replace(":online", "");
-    setModel(baseModel);
-    Cookies.set("selectedModel", baseModel, { expires: 30 });
-  };
-
   const handleLogout = async () => {
     await signOut({
       redirect: true,
@@ -276,14 +276,8 @@ function Chat() {
   };
 
   const handleTemplateClick = async (template: any) => {
-    // Check if user is authenticated before checking API key
     if (status !== "authenticated" || !session) {
       router.push("/login");
-      return;
-    }
-
-    if (!hasValidApiKey) {
-      alert("Please configure your OpenRouter API key first.");
       return;
     }
 
@@ -341,30 +335,93 @@ function Chat() {
   };
 
   return (
-    <div className="min-h-screen text-white">
-      <header className="flex justify-end items-center p-3">
-        {status === "authenticated" && (
-          <div className="flex items-center gap-4">
+    <div className="bg-gradient-to-br from-blue-900 from-10% to-black to-90% min-h-screen  text-white overflow-y-auto">
+      {/* Navbar */}
+      {status === "unauthenticated" ? (
+        <Navbar />
+      ) : (
+        <header className="flex justify-between items-center p-3">
+          <h4 className="text-xl font-extrabold w-full max-w-36">Yep Dev</h4>
+          <div className="md:hidden flex justify-end items-center gap-2">
+            <div className="text-sm">
+              Available Credits: {loadingCredits ? "..." : creditBalance ?? 0}
+            </div>
+            <SidebarMenu className="flex w-fit ">
+              <SidebarMenuItem>
+                <DropdownMenu
+                  open={dropdownOpen}
+                  onOpenChange={setDropdownOpen}
+                >
+                  <DropdownMenuTrigger asChild>
+                    <SidebarMenuButton
+                      size="lg"
+                      className="flex justify-center"
+                    >
+                      <LucideMenu />
+                    </SidebarMenuButton>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    className="w-[--radix-dropdown-menu-trigger-width] min-w-56 bg-black rounded-lg border-none"
+                    side="bottom"
+                    align="end"
+                    sideOffset={4}
+                  >
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>
+                      <User />
+                      {session?.user?.email}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        signOut({
+                          callbackUrl: "/login",
+                          redirect: true,
+                        })
+                      }
+                    >
+                      <Sparkle />
+                      Buy Credits
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        signOut({
+                          callbackUrl: "/login",
+                          redirect: true,
+                        })
+                      }
+                    >
+                      <LogOut />
+                      Log out
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </div>
+          <div className="w-full justify-end items-center gap-4 hidden md:flex">
             <div className="text-sm">{session?.user?.email}</div>
             <div className="text-sm">
-              Credits: {loadingCredits ? "..." : creditBalance ?? 0}
-              <button className="ml-2 px-2 py-1 bg-blue-600 rounded text-white" onClick={handleBuyCredits}>
-                Buy Credits
-              </button>
+              Credit Balance: {loadingCredits ? "..." : creditBalance ?? 0}
             </div>
             <Button
-              className="border border-[#313133] rounded-xl bg-[#161618] shadow-sm p-3"
-              variant="outline"
+              className="rounded-md bg-[#161618] hover:bg-[#232327] shadow-sm p-3"
+              onClick={handleBuyCredits}
+            >
+              Buy Credits
+            </Button>
+            <Button
+              className="rounded-md bg-[#161618] hover:bg-[#232327] shadow-sm p-3"
               onClick={handleLogout}
             >
               Sign Out
             </Button>
           </div>
-        )}
-      </header>
+        </header>
+      )}
 
       <div className="max-w-4xl mx-auto px-6 py-8 flex flex-col gap-10">
-        {/* Header */}
+        {/* Heading */}
         <div className="space-y-2">
           <div className="flex items-center gap-2 lg:gap-4 flex-col  mt-8">
             <div className="flex items-center gap-2">
@@ -385,21 +442,20 @@ function Chat() {
         <div className="w-full pt-4">
           <form
             onSubmit={handleSubmit}
-            className="border border-[#313133] rounded-xl bg-[#161618] shadow-sm p-3"
+            className="bg-transparent w-full flex flex-col gap-4"
           >
-            <div className="pb-3">
-              <ModelSelector
-                model={model}
-                setModel={setModel}
-                modelList={modelList}
-                apiKeys={{}}
-                modelLoading={isModelLoading}
-              />
+            <div className="bg-gradient-to-r rounded-md from-cyan-500 to-black p-[0.5px]">
+              <div className="w-full">
+                <ModelSelector
+                  model={model}
+                  setModel={setModel}
+                  modelList={modelList}
+                  apiKeys={{}}
+                  modelLoading={isModelLoading}
+                />
+              </div>
             </div>
-
-            {/* Remove all usages of getAllApiKeysFromStorage and APIKeyManager */}
-
-            <div className="border border-[#313133] rounded-xl bg-[#161618] shadow-sm">
+            <div className="border border-[#313133] rounded-md bg-[#161618] shadow-sm">
               {/* Image preview area */}
               {uploadedImages.length > 0 && (
                 <div className="mb-3 p-3 bg-[#1a1a1c] rounded-lg border border-[#313133]">
@@ -484,7 +540,10 @@ function Chat() {
                       size="icon"
                       className="h-10 w-10 rounded-full bg-blue-500 hover:bg-blue-600"
                       disabled={
-                        isStarterLoading || enhancingPrompt || !userPrompt.trim() || (creditBalance !== null && creditBalance <= 0)
+                        isStarterLoading ||
+                        enhancingPrompt ||
+                        !userPrompt.trim() ||
+                        (creditBalance !== null && creditBalance <= 0)
                       }
                     >
                       {isStarterLoading ? (
@@ -496,15 +555,8 @@ function Chat() {
                   </div>
                 )}
                 {creditBalance !== null && creditBalance <= 0 && (
-                  <div className="mt-2 text-red-500 text-sm flex items-center gap-2">
-                    You have 0 credits. 
-                    <Button
-                      className="ml-2 px-2 py-1 bg-blue-600 rounded text-white"
-                      onClick={handleBuyCredits}
-                      size="sm"
-                    >
-                      Buy Credits
-                    </Button>
+                  <div className=" text-red-500 my-1 text-sm flex items-center">
+                    You&apos;ve run out of credits. Refill now to continue.
                   </div>
                 )}
               </div>
@@ -536,7 +588,9 @@ function Chat() {
                   <button
                     type="button"
                     className="text-gray-400 hover:text-gray-300 transition-colors cursor-pointer disabled:opacity-50"
-                    onClick={() => enhancePrompt(userPrompt, setUserPrompt, model)}
+                    onClick={() =>
+                      enhancePrompt(userPrompt, setUserPrompt, model)
+                    }
                     disabled={enhancingPrompt || userPrompt.length === 0}
                   >
                     <Icons.sparkles

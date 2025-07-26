@@ -1,8 +1,8 @@
-import { classNames } from '@/app/utils/classNames';
-import { DEFAULT_PROVIDER } from '@/lib/provider';
-import { ModelInfo } from '@/lib/types/index';
-import type { KeyboardEvent } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { classNames } from "@/app/utils/classNames";
+import { DEFAULT_PROVIDER } from "@/lib/provider";
+import { ModelInfo } from "@/lib/types/index";
+import type { KeyboardEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface ModelSelectorProps {
   model?: string;
@@ -18,10 +18,12 @@ export const ModelSelector = ({
   modelList,
   modelLoading,
 }: ModelSelectorProps) => {
-  const [modelSearchQuery, setModelSearchQuery] = useState('');
+  const [modelSearchQuery, setModelSearchQuery] = useState("");
   const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false);
   const [focusedModelIndex, setFocusedModelIndex] = useState(-1);
-  const [dropdownPosition, setDropdownPosition] = useState<'top' | 'bottom'>('bottom');
+  const [dropdownPosition, setDropdownPosition] = useState<"top" | "bottom">(
+    "bottom"
+  );
   const [triggerRect, setTriggerRect] = useState<DOMRect | null>(null);
   const modelSearchInputRef = useRef<HTMLInputElement>(null);
   const modelOptionsRef = useRef<(HTMLDivElement | null)[]>([]);
@@ -34,23 +36,26 @@ export const ModelSelector = ({
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
       if (
-        modelDropdownRef.current && !modelDropdownRef.current.contains(target) &&
-        (!searchOverlayRef.current || !searchOverlayRef.current.contains(target)) &&
-        (!dropdownListContainerRef.current || !dropdownListContainerRef.current.contains(target))
+        modelDropdownRef.current &&
+        !modelDropdownRef.current.contains(target) &&
+        (!searchOverlayRef.current ||
+          !searchOverlayRef.current.contains(target)) &&
+        (!dropdownListContainerRef.current ||
+          !dropdownListContainerRef.current.contains(target))
       ) {
         setIsModelDropdownOpen(false);
-        setModelSearchQuery('');
+        setModelSearchQuery("");
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
 
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // Calculate dropdown position based on available space
   const calculateDropdownPosition = () => {
-    if (!triggerRef.current) return 'bottom';
+    if (!triggerRef.current) return "bottom";
 
     const triggerRect = triggerRef.current.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
@@ -61,10 +66,10 @@ export const ModelSelector = ({
 
     // If there's not enough space below but enough space above, open upward
     if (spaceBelow < dropdownHeight && spaceAbove > dropdownHeight) {
-      return 'top';
+      return "top";
     }
 
-    return 'bottom';
+    return "bottom";
   };
 
   const handleDropdownToggle = () => {
@@ -77,7 +82,7 @@ export const ModelSelector = ({
     }
     setIsModelDropdownOpen(!isModelDropdownOpen);
     if (isModelDropdownOpen) {
-      setModelSearchQuery('');
+      setModelSearchQuery("");
     }
   };
 
@@ -86,7 +91,7 @@ export const ModelSelector = ({
     .filter(
       (model) =>
         model.label.toLowerCase().includes(modelSearchQuery.toLowerCase()) ||
-        model.name.toLowerCase().includes(modelSearchQuery.toLowerCase()),
+        model.name.toLowerCase().includes(modelSearchQuery.toLowerCase())
     );
 
   useEffect(() => {
@@ -105,31 +110,38 @@ export const ModelSelector = ({
     }
 
     switch (e.key) {
-      case 'ArrowDown':
+      case "ArrowDown":
         e.preventDefault();
-        setFocusedModelIndex((prev) => (prev + 1 >= filteredModels.length ? 0 : prev + 1));
+        setFocusedModelIndex((prev) =>
+          prev + 1 >= filteredModels.length ? 0 : prev + 1
+        );
         break;
-      case 'ArrowUp':
+      case "ArrowUp":
         e.preventDefault();
-        setFocusedModelIndex((prev) => (prev - 1 < 0 ? filteredModels.length - 1 : prev - 1));
+        setFocusedModelIndex((prev) =>
+          prev - 1 < 0 ? filteredModels.length - 1 : prev - 1
+        );
         break;
-      case 'Enter':
+      case "Enter":
         e.preventDefault();
 
-        if (focusedModelIndex >= 0 && focusedModelIndex < filteredModels.length) {
+        if (
+          focusedModelIndex >= 0 &&
+          focusedModelIndex < filteredModels.length
+        ) {
           const selectedModel = filteredModels[focusedModelIndex];
           setModel?.(selectedModel.name);
           setIsModelDropdownOpen(false);
-          setModelSearchQuery('');
+          setModelSearchQuery("");
         }
 
         break;
-      case 'Escape':
+      case "Escape":
         e.preventDefault();
         setIsModelDropdownOpen(false);
-        setModelSearchQuery('');
+        setModelSearchQuery("");
         break;
-      case 'Tab':
+      case "Tab":
         if (!e.shiftKey && focusedModelIndex === filteredModels.length - 1) {
           setIsModelDropdownOpen(false);
         }
@@ -140,16 +152,16 @@ export const ModelSelector = ({
 
   useEffect(() => {
     if (focusedModelIndex >= 0 && modelOptionsRef.current[focusedModelIndex]) {
-      modelOptionsRef.current[focusedModelIndex]?.scrollIntoView({ block: 'nearest' });
+      modelOptionsRef.current[focusedModelIndex]?.scrollIntoView({
+        block: "nearest",
+      });
     }
   }, [focusedModelIndex]);
 
   if (modelList.length === 0) {
     return (
-      <div className="p-2 rounded-xl border border-[#313133] bg-[#161618] transition-all cursor-pointer ">
-        <p className="text-left">
-          Loading models...
-        </p>
+      <div className="p-2 rounded-md border border-[#313133] bg-[#161618] transition-all cursor-pointer ">
+        <p className="text-left">Loading models...</p>
       </div>
     );
   }
@@ -158,19 +170,27 @@ export const ModelSelector = ({
     <>
       <div className="flex gap-2 flex-col sm:flex-row">
         {/* Model Combobox */}
-        <div className="relative flex w-full min-w-[70%]" ref={modelDropdownRef}>
+        <div
+          className="relative flex w-full min-w-[70%]"
+          ref={modelDropdownRef}
+        >
           <div
             ref={triggerRef}
             className={classNames(
-              'w-full p-2 rounded-xl border border-[#313133]',
-              'transition-all cursor-pointer flex items-center justify-between',
-              'bg-[#161618]',
-              isModelDropdownOpen ? 'ring-2 ring-bolt-elements-focus' : 'focus:ring-2 focus:ring-bolt-elements-focus',
-              isModelDropdownOpen && triggerRect ? 'opacity-50' : ''
+              "w-full p-2 rounded-md border border-[#313133]",
+              "transition-all cursor-pointer flex items-center justify-between",
+              "bg-[#161618]",
+              isModelDropdownOpen
+                ? "ring-2 ring-bolt-elements-focus"
+                : "focus:ring-2 focus:ring-bolt-elements-focus",
+              isModelDropdownOpen && triggerRect ? "opacity-50" : ""
             )}
             onClick={handleDropdownToggle}
             onKeyDown={(e) => {
-              if (!isModelDropdownOpen && (e.key === 'Enter' || e.key === ' ')) {
+              if (
+                !isModelDropdownOpen &&
+                (e.key === "Enter" || e.key === " ")
+              ) {
                 e.preventDefault();
                 handleDropdownToggle();
               }
@@ -181,11 +201,13 @@ export const ModelSelector = ({
             aria-haspopup="listbox"
             tabIndex={isModelDropdownOpen ? -1 : 0}
           >
-            <div className="truncate flex-grow">{modelList.find((m) => m.name === model)?.label || 'Select model'}</div>
+            <div className="truncate flex-grow">
+              {modelList.find((m) => m.name === model)?.label || "Select model"}
+            </div>
             <div
               className={classNames(
-                'i-ph:caret-down w-4 h-4 text-bolt-elements-textSecondary opacity-75 ml-2 flex-shrink-0',
-                isModelDropdownOpen ? 'rotate-180' : undefined,
+                "i-ph:caret-down w-4 h-4 text-bolt-elements-textSecondary opacity-75 ml-2 flex-shrink-0",
+                isModelDropdownOpen ? "rotate-180" : undefined
               )}
             />
           </div>
@@ -196,13 +218,13 @@ export const ModelSelector = ({
         <>
           <div
             ref={searchOverlayRef}
-            className="fixed z-[100000] flex items-center justify-between bg-[#161618] border border-[#313133] rounded-xl ring-2 ring-bolt-elements-focus"
+            className="fixed z-[100000] flex items-center justify-between bg-[#161618] border border-[#313133] rounded-md ring-2 ring-bolt-elements-focus"
             style={{
               left: triggerRect.left,
               top: triggerRect.top,
               width: triggerRect.width,
               height: triggerRect.height,
-              boxSizing: 'border-box',
+              boxSizing: "border-box",
             }}
             onKeyDown={handleModelKeyDown}
           >
@@ -214,8 +236,8 @@ export const ModelSelector = ({
                 onChange={(e) => setModelSearchQuery(e.target.value)}
                 placeholder="Search models..."
                 className={classNames(
-                  'w-full h-full bg-transparent border-0 focus:outline-none focus:ring-0',
-                  'text-bolt-elements-textPrimary placeholder-bolt-elements-textTertiary'
+                  "w-full h-full bg-transparent border-0 focus:outline-none focus:ring-0",
+                  "text-bolt-elements-textPrimary placeholder-bolt-elements-textTertiary"
                 )}
                 role="searchbox"
                 aria-label="Search models"
@@ -223,23 +245,22 @@ export const ModelSelector = ({
             </div>
             <div
               className={classNames(
-                'i-ph:caret-down w-4 h-4 text-bolt-elements-textSecondary opacity-75 ml-auto mr-2 flex-shrink-0',
-                'rotate-180'
+                "i-ph:caret-down w-4 h-4 text-bolt-elements-textSecondary opacity-75 ml-auto mr-2 flex-shrink-0",
+                "rotate-180"
               )}
             />
           </div>
 
           <div
             ref={dropdownListContainerRef}
-            className="fixed z-[99999] bg-[#161618] shadow-2xl border border-[#313133] rounded-lg"
+            className="fixed z-[99999] bg-[#161618] shadow-2xl border border-[#313133] rounded-md"
             style={{
               left: triggerRect.left,
               width: triggerRect.width,
-              ...(dropdownPosition === 'top'
+              ...(dropdownPosition === "top"
                 ? { bottom: window.innerHeight - triggerRect.top + 4 }
-                : { top: triggerRect.bottom + 4 }
-              ),
-              visibility: triggerRect ? 'visible' : 'hidden'
+                : { top: triggerRect.bottom + 4 }),
+              visibility: triggerRect ? "visible" : "hidden",
             }}
             role="listbox"
             id="model-listbox"
@@ -247,24 +268,29 @@ export const ModelSelector = ({
           >
             <div
               className={classNames(
-                'max-h-60 overflow-y-auto bg-[#161618]',
-                'rounded-lg',
-                'sm:scrollbar-none',
-                '[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar]:h-2',
-                '[&::-webkit-scrollbar-thumb]:bg-bolt-elements-borderColor',
-                '[&::-webkit-scrollbar-thumb]:hover:bg-bolt-elements-borderColorHover',
-                '[&::-webkit-scrollbar-thumb]:rounded-full',
-                '[&::-webkit-scrollbar-track]:bg-bolt-elements-background-depth-2',
-                '[&::-webkit-scrollbar-track]:rounded-full',
-                'sm:[&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:h-1.5',
-                'sm:hover:[&::-webkit-scrollbar-thumb]:bg-bolt-elements-borderColor/50',
-                'sm:hover:[&::-webkit-scrollbar-thumb:hover]:bg-bolt-elements-borderColor',
+                "max-h-60 overflow-y-auto bg-[#161618]",
+                "rounded-md",
+                "sm:scrollbar-none",
+                "[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar]:h-2",
+                "[&::-webkit-scrollbar-thumb]:bg-bolt-elements-borderColor",
+                "[&::-webkit-scrollbar-thumb]:hover:bg-bolt-elements-borderColorHover",
+                "[&::-webkit-scrollbar-thumb]:rounded-full",
+                "[&::-webkit-scrollbar-track]:bg-bolt-elements-background-depth-2",
+                "[&::-webkit-scrollbar-track]:rounded-full",
+                "sm:[&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:h-1.5",
+                "sm:hover:[&::-webkit-scrollbar-thumb]:bg-bolt-elements-borderColor/50",
+                "sm:hover:[&::-webkit-scrollbar-thumb:hover]:bg-bolt-elements-borderColor"
               )}
             >
-              {modelLoading === 'all' || modelLoading === DEFAULT_PROVIDER?.name ? (
-                <div className="px-3 py-2 text-sm text-bolt-elements-textTertiary">Loading...</div>
+              {modelLoading === "all" ||
+              modelLoading === DEFAULT_PROVIDER?.name ? (
+                <div className="px-3 py-2 text-sm text-bolt-elements-textTertiary">
+                  Loading...
+                </div>
               ) : filteredModels.length === 0 ? (
-                <div className="px-3 py-2 text-sm text-bolt-elements-textTertiary">No models found</div>
+                <div className="px-3 py-2 text-sm text-bolt-elements-textTertiary">
+                  No models found
+                </div>
               ) : (
                 filteredModels.map((modelOption, index) => (
                   <div
@@ -275,20 +301,22 @@ export const ModelSelector = ({
                     role="option"
                     aria-selected={model === modelOption.name}
                     className={classNames(
-                      'px-3 py-2 text-sm cursor-pointer',
-                      'hover:bg-bolt-elements-background-depth-3',
-                      'text-bolt-elements-textPrimary',
-                      'outline-none',
+                      "px-3 py-2 text-sm cursor-pointer",
+                      "hover:bg-bolt-elements-background-depth-3",
+                      "text-bolt-elements-textPrimary",
+                      "outline-none",
                       model === modelOption.name || focusedModelIndex === index
-                        ? 'bg-bolt-elements-background-depth-2'
+                        ? "bg-bolt-elements-background-depth-2"
                         : undefined,
-                      focusedModelIndex === index ? 'ring-1 ring-inset ring-bolt-elements-focus' : undefined,
+                      focusedModelIndex === index
+                        ? "ring-1 ring-inset ring-bolt-elements-focus"
+                        : undefined
                     )}
                     onClick={(e) => {
                       e.stopPropagation();
                       setModel?.(modelOption.name);
                       setIsModelDropdownOpen(false);
-                      setModelSearchQuery('');
+                      setModelSearchQuery("");
                     }}
                     tabIndex={focusedModelIndex === index ? 0 : -1}
                   >

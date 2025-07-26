@@ -1,0 +1,21 @@
+import { useRouter } from "next/navigation";
+import { Button } from "./ui/button";
+
+export default function Navbar() {
+  const router = useRouter();
+  return (
+    <header className="w-full sticky top-0 h-16 justify-end flex items-center px-8 py-4">
+      <div className="flex w-full justify-between items-center gap-4">
+        <h4 className="text-xl font-extrabold w-full">Yep Dev</h4>
+        <div className="w-full flex justify-end items-center">
+          <Button
+            className="rounded-md bg-[#161618] hover:bg-[#202023] flex justify-center items-center"
+            onClick={() => router.push("/login")}
+          >
+            Sign In
+          </Button>
+        </div>
+      </div>
+    </header>
+  );
+}
