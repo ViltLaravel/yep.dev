@@ -1,4 +1,5 @@
 // Test script to check credit deduction
+// Run this in your browser console or as a Node.js script
 
 async function testCreditDeduction() {
   console.log('=== CREDIT DEDUCTION TEST ===');
