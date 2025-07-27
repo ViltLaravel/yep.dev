@@ -405,18 +405,53 @@ export async function POST(request: Request) {
             if (part.type === 'error') {
               const error: any = part.error;
               console.error(`${error}`);
-
               return;
             }
           }
         })();
         result.mergeIntoDataStream(dataStream);
+
+        // CREDIT DEDUCTION LOGIC (moved here)
+        try {
+          // Model price per token (example, adjust as needed)
+          const MODEL_PRICES = {
+            'deepseek/deepseek-chat-v3-0324:free': 0.00001, // $/token, example
+            'openai/gpt-4o-mini': 0.00002,
+          };
+          const model = selectedModel || extractPropertiesFromMessage(lastUserMessage).model;
+          const pricePerToken = MODEL_PRICES[model] || 0.00001;
+          const totalTokensUsed = cumulativeUsage.totalTokens || 0;
+          const cost = totalTokensUsed * pricePerToken;
+          
+          console.log('[CREDIT DEDUCTION DEBUG] ==========================================');
+          console.log('[CREDIT DEDUCTION DEBUG] User ID:', user?.id ?? '');
+          console.log('[CREDIT DEDUCTION DEBUG] User email:', user?.email ?? '');
+          console.log('[CREDIT DEDUCTION DEBUG] Credits BEFORE deduction:', user?.credits ?? 0);
+          console.log('[CREDIT DEDUCTION DEBUG] Model used:', model);
+          console.log('[CREDIT DEDUCTION DEBUG] Total tokens used:', totalTokensUsed);
+          console.log('[CREDIT DEDUCTION DEBUG] Price per token:', pricePerToken);
+          console.log('[CREDIT DEDUCTION DEBUG] Cost to deduct:', cost);
+          
+          if (cost > 0) {
+            const updateResult = await db.user.update({
+              where: { id: user?.id ?? '' },
+              data: { credits: { decrement: cost } },
+            });
+            console.log('[CREDIT DEDUCTION DEBUG] Credits AFTER deduction:', updateResult.credits);
+            console.log('[CREDIT DEDUCTION DEBUG] db.user.update result:', updateResult);
+            console.log('[CREDIT DEDUCTION DEBUG] ==========================================');
+          } else {
+            console.log('[CREDIT DEDUCTION DEBUG] Skipped deduction, cost is 0');
+            console.log('[CREDIT DEDUCTION DEBUG] ==========================================');
+          }
+        } catch (deductError) {
+          console.error('[CREDIT DEDUCTION DEBUG] Error updating user credits:', deductError);
+          console.log('[CREDIT DEDUCTION DEBUG] ==========================================');
+        }
       },
-      onError: (error: any) => {
+      onError: (error) => {
         console.log('Error /chat:', error);
-
-        return `Custom error: ${error.message}`
-
+        return `Custom error: ${(error as any).message}`;
       },
     });
 
@@ -429,44 +464,6 @@ export async function POST(request: Request) {
         'Text-Encoding': 'chunked',
       },
     });
-
-    // CREDIT DEDUCTION LOGIC
-    try {
-      // Model price per token (example, adjust as needed)
-      const MODEL_PRICES = {
-        'deepseek/deepseek-chat-v3-0324:free': 0.00001, // $/token, example
-        'openai/gpt-4o-mini': 0.00002,
-      };
-      const model = selectedModel || extractPropertiesFromMessage(lastUserMessage).model;
-      const pricePerToken = MODEL_PRICES[model] || 0.00001;
-      const totalTokensUsed = cumulativeUsage.totalTokens || 0;
-      const cost = totalTokensUsed * pricePerToken;
-      
-      console.log('[CREDIT DEDUCTION DEBUG] ==========================================');
-      console.log('[CREDIT DEDUCTION DEBUG] User ID:', user?.id ?? '');
-      console.log('[CREDIT DEDUCTION DEBUG] User email:', user?.email ?? '');
-      console.log('[CREDIT DEDUCTION DEBUG] Credits BEFORE deduction:', user?.credits ?? 0);
-      console.log('[CREDIT DEDUCTION DEBUG] Model used:', model);
-      console.log('[CREDIT DEDUCTION DEBUG] Total tokens used:', totalTokensUsed);
-      console.log('[CREDIT DEDUCTION DEBUG] Price per token:', pricePerToken);
-      console.log('[CREDIT DEDUCTION DEBUG] Cost to deduct:', cost);
-      
-      if (cost > 0) {
-        const updateResult = await db.user.update({
-          where: { id: user?.id ?? '' },
-          data: { credits: { decrement: cost } },
-        });
-        console.log('[CREDIT DEDUCTION DEBUG] Credits AFTER deduction:', updateResult.credits);
-        console.log('[CREDIT DEDUCTION DEBUG] db.user.update result:', updateResult);
-        console.log('[CREDIT DEDUCTION DEBUG] ==========================================');
-      } else {
-        console.log('[CREDIT DEDUCTION DEBUG] Skipped deduction, cost is 0');
-        console.log('[CREDIT DEDUCTION DEBUG] ==========================================');
-      }
-    } catch (deductError) {
-      console.error('[CREDIT DEDUCTION DEBUG] Error updating user credits:', deductError);
-      console.log('[CREDIT DEDUCTION DEBUG] ==========================================');
-    }
   } catch (error: any) {
     console.error("Unhandled error in /chat API route:", error);
     console.error("Error stack:", error.stack);

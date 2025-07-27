@@ -33,7 +33,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { ModelSelector } from "./components/chat/ModelSelector";
-import { UpgradeDialog } from "./components/UpgradeDialog";
+
 import { BuyCreditsDialog } from "./components/BuyCreditsDialog";
 import Navbar from "@/components/NavBar";
 import {
@@ -669,10 +669,6 @@ function Chat() {
         </div>
       </div>
 
-      <UpgradeDialog
-        open={showUpgradeDialog}
-        onOpenChange={setShowUpgradeDialog}
-      />
       <BuyCreditsDialog
         open={showBuyCreditsDialog}
         onOpenChange={setShowBuyCreditsDialog}

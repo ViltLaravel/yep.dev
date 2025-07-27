@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import { UpgradeDialog } from "@/app/components/UpgradeDialog";
+
 import {
   $workbench,
   addDirectoryToWorkbench,
@@ -1103,11 +1103,6 @@ function Workspace() {
           setShowErrorNotification(false);
           setErrorNotificationDetails(null);
         }}
-      />
-
-      <UpgradeDialog
-        open={showUpgradeDialog}
-        onOpenChange={setShowUpgradeDialog}
       />
     </div>
   );

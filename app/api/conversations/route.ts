@@ -51,17 +51,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    if (!user.isSubscribed && user.projects.length >= MAX_FREE_PROJECT) {
-      return NextResponse.json(
-        {
-          error: 'Project limit reached',
-          message: 'Free users can create up to 5 projects. Upgrade to Pro for unlimited projects.',
-          requiresUpgrade: true
-        },
-        { status: 403 }
-      );
-    }
-
     const conversation = await createConversation(
       userId,
       title,

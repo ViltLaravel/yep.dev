@@ -70,18 +70,6 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'User not found' }, { status: 404 });
         }
 
-        // If user is not subscribed and has 5 or more projects, deny creation
-        if (!user.isSubscribed && user.projects.length >= MAX_FREE_PROJECT) {
-            return NextResponse.json(
-                {
-                    error: 'Project limit reached',
-                    message: 'Free users can create up to 5 projects. Upgrade to Pro for unlimited projects.',
-                    requiresUpgrade: true
-                },
-                { status: 403 }
-            );
-        }
-
         // Create the project
         const project = await db.project.create({
             data: {
