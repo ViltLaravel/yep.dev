@@ -34,6 +34,7 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { ModelSelector } from "./components/chat/ModelSelector";
 import { UpgradeDialog } from "./components/UpgradeDialog";
+import { BuyCreditsDialog } from "./components/BuyCreditsDialog";
 import Navbar from "@/components/NavBar";
 import {
   SidebarMenu,
@@ -63,6 +64,7 @@ function Chat() {
   );
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
+  const [showBuyCreditsDialog, setShowBuyCreditsDialog] = useState(false);
   const [webSearchEnabled, setWebSearchEnabled] = useState(() => {
     if (typeof window !== "undefined") {
       const savedWebSearch = Cookies.get("webSearchEnabled");
@@ -131,19 +133,8 @@ function Chat() {
     fetchCredits();
   }, [session?.user?.email]);
 
-  const handleBuyCredits = async () => {
-    const credits = prompt("How many credits do you want to purchase?");
-    const creditsNum = Number(credits);
-    if (!creditsNum || creditsNum <= 0) return;
-    const res = await fetch("/api/stripe/create-checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ credits: creditsNum }),
-    });
-    const data = await res.json();
-    if (data.url) {
-      window.location.href = data.url;
-    }
+  const handleBuyCredits = () => {
+    setShowBuyCreditsDialog(true);
   };
 
   const removeImage = (index: number) => {
@@ -373,12 +364,7 @@ function Chat() {
                       {session?.user?.email}
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      onClick={() =>
-                        signOut({
-                          callbackUrl: "/login",
-                          redirect: true,
-                        })
-                      }
+                      onClick={handleBuyCredits}
                     >
                       <Sparkle />
                       Buy Credits
@@ -686,6 +672,10 @@ function Chat() {
       <UpgradeDialog
         open={showUpgradeDialog}
         onOpenChange={setShowUpgradeDialog}
+      />
+      <BuyCreditsDialog
+        open={showBuyCreditsDialog}
+        onOpenChange={setShowBuyCreditsDialog}
       />
     </div>
   );
