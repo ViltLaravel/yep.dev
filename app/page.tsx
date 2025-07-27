@@ -336,7 +336,7 @@ function Chat() {
           <h4 className="text-xl font-extrabold w-full max-w-36">Yep Dev</h4>
           <div className="md:hidden flex justify-end items-center gap-2">
             <div className="text-sm">
-              Available Credits: {loadingCredits ? "..." : creditBalance ?? 0}
+              Available Credits: {loadingCredits ? "..." : creditBalance ? creditBalance.toFixed(2) : 0}
             </div>
             <SidebarMenu className="flex w-fit ">
               <SidebarMenuItem>
@@ -389,7 +389,7 @@ function Chat() {
           <div className="w-full justify-end items-center gap-4 hidden md:flex">
             <div className="text-sm">{session?.user?.email}</div>
             <div className="text-sm">
-              Credit Balance: {loadingCredits ? "..." : creditBalance ?? 0}
+            Available Credits: {loadingCredits ? "..." : creditBalance ? creditBalance.toFixed(2) : 0}
             </div>
             <Button
               className="rounded-md bg-[#161618] hover:bg-[#232327] shadow-sm p-3"
