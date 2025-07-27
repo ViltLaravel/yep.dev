@@ -112,6 +112,10 @@ export default class OpenRouterProvider extends BaseProvider {
           label: `${m.name} - in:$${(m.pricing.prompt * 1_000_000).toFixed(2)} out:$${(m.pricing.completion * 1_000_000).toFixed(2)} - context ${Math.floor(m.context_length / 1000)}k`,
           provider: this.name,
           maxTokenAllowed: 8000,
+          pricing: {
+            prompt: m.pricing.prompt,
+            completion: m.pricing.completion,
+          },
         }));
     } catch (error) {
       console.error('Error getting OpenRouter models:', error);
