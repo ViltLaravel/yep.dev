@@ -18,7 +18,6 @@ import { cn } from "@/lib/utils";
 import Cookies from "js-cookie";
 import {
   ArrowUp,
-  Coins,
   Image as ImageIcon,
   Loader2,
   LogOut,
@@ -77,6 +76,12 @@ function Chat() {
     const savedModel = Cookies.get("selectedModel");
     return savedModel || DEFAULT_MODEL;
   });
+
+  const handleModelChange = (newModel: string) => {
+    const baseModel = newModel.replace(':online', '');
+    setModel(baseModel);
+    Cookies.set("selectedModel", baseModel, { expires: 30 });
+  };
 
   // Check for returnPrompt URL parameter and pre-fill prompt
   const [userPrompt, setUserPrompt] = useState("");
@@ -435,9 +440,9 @@ function Chat() {
               <div className="w-full">
                 <ModelSelector
                   model={model}
-                  setModel={setModel}
+                  setModel={handleModelChange}
                   modelList={modelList}
-                  apiKeys={{}}
+                  apiKey={process.env.OPENROUTER_API_KEY}
                   modelLoading={isModelLoading}
                 />
               </div>

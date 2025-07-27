@@ -13,6 +13,7 @@ import { createDataStream, generateId } from 'ai';
 import { getServerSession } from 'next-auth/next';
 import { db } from '@/lib/db';
 import { authOptions } from '@/lib/auth';
+import OpenRouterProvider from '@/lib/provider';
 
 const MAX_RESPONSE_SEGMENTS = 10;
 const MAX_TOKENS = 65536;
@@ -411,39 +412,62 @@ export async function POST(request: Request) {
         })();
         result.mergeIntoDataStream(dataStream);
 
-        // CREDIT DEDUCTION LOGIC (moved here)
+        // DYNAMIC CREDIT DEDUCTION LOGIC
         try {
-          // Model price per token (example, adjust as needed)
-          const MODEL_PRICES = {
-            'deepseek/deepseek-chat-v3-0324:free': 0.00001, // $/token, example
-            'openai/gpt-4o-mini': 0.00002,
-          };
+          // Fetch the latest model list from OpenRouter
+          const provider = new OpenRouterProvider();
+          const modelList = await provider.getDynamicModels({ OpenRouter: process.env.OPENROUTER_API_KEY ?? '' });
           const model = selectedModel || extractPropertiesFromMessage(lastUserMessage).model;
-          const pricePerToken = MODEL_PRICES[model] || 0.00001;
-          const totalTokensUsed = cumulativeUsage.totalTokens || 0;
-          const cost = totalTokensUsed * pricePerToken;
           
+          if (!model) {
+            throw new Error('Model not specified in request or user message');
+          }
+          
+          const modelInfo = modelList.find(m => m.name === model);
+          
+          if (!modelInfo) {
+            console.warn(`[CREDIT DEDUCTION] Model "${model}" not found in dynamic model list`);
+            throw new Error('Requested model not available');
+          }
+          
+          if (!modelInfo.pricing) {
+            console.warn(`[CREDIT DEDUCTION] Pricing information missing for model: ${model}`);
+            throw new Error('Pricing not available for requested model');
+          }
+          
+          // Convert pricing from per 1K tokens to per token
+          const inputPricePerToken = modelInfo.pricing.prompt ? modelInfo.pricing.prompt / 1000 : 0;
+          const outputPricePerToken = modelInfo.pricing.completion ? modelInfo.pricing.completion / 1000 : 0;
+
+          const promptTokensUsed = cumulativeUsage.promptTokens || 0;
+          const completionTokensUsed = cumulativeUsage.completionTokens || 0;
+
+          // Calculate cost based on actual usage and pricing
+          const cost = (promptTokensUsed * inputPricePerToken) + (completionTokensUsed * outputPricePerToken);
+
+          if (cost <= 0) {
+            console.warn(`[CREDIT DEDUCTION] Invalid or zero cost (${cost}) for model: ${model}`);
+            throw new Error('Invalid pricing for requested model');
+          }
+
           console.log('[CREDIT DEDUCTION DEBUG] ==========================================');
           console.log('[CREDIT DEDUCTION DEBUG] User ID:', user?.id ?? '');
           console.log('[CREDIT DEDUCTION DEBUG] User email:', user?.email ?? '');
           console.log('[CREDIT DEDUCTION DEBUG] Credits BEFORE deduction:', user?.credits ?? 0);
           console.log('[CREDIT DEDUCTION DEBUG] Model used:', model);
-          console.log('[CREDIT DEDUCTION DEBUG] Total tokens used:', totalTokensUsed);
-          console.log('[CREDIT DEDUCTION DEBUG] Price per token:', pricePerToken);
+          console.log('[CREDIT DEDUCTION DEBUG] Prompt tokens used:', promptTokensUsed);
+          console.log('[CREDIT DEDUCTION DEBUG] Completion tokens used:', completionTokensUsed);
+          console.log('[CREDIT DEDUCTION DEBUG] Price per prompt token:', inputPricePerToken);
+          console.log('[CREDIT DEDUCTION DEBUG] Price per completion token:', outputPricePerToken);
           console.log('[CREDIT DEDUCTION DEBUG] Cost to deduct:', cost);
-          
-          if (cost > 0) {
-            const updateResult = await db.user.update({
-              where: { id: user?.id ?? '' },
-              data: { credits: { decrement: cost } },
-            });
-            console.log('[CREDIT DEDUCTION DEBUG] Credits AFTER deduction:', updateResult.credits);
-            console.log('[CREDIT DEDUCTION DEBUG] db.user.update result:', updateResult);
-            console.log('[CREDIT DEDUCTION DEBUG] ==========================================');
-          } else {
-            console.log('[CREDIT DEDUCTION DEBUG] Skipped deduction, cost is 0');
-            console.log('[CREDIT DEDUCTION DEBUG] ==========================================');
-          }
+
+          const updateResult = await db.user.update({
+            where: { id: user?.id ?? '' },
+            data: { credits: { decrement: cost } },
+          });
+          console.log('[CREDIT DEDUCTION DEBUG] Credits AFTER deduction:', updateResult.credits);
+          console.log('[CREDIT DEDUCTION DEBUG] db.user.update result:', updateResult);
+          console.log('[CREDIT DEDUCTION DEBUG] ==========================================');
         } catch (deductError) {
           console.error('[CREDIT DEDUCTION DEBUG] Error updating user credits:', deductError);
           console.log('[CREDIT DEDUCTION DEBUG] ==========================================');

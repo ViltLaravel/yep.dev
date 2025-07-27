@@ -36,6 +36,10 @@ export interface ModelInfo {
   label: string;
   provider: string;
   maxTokenAllowed: number;
+  pricing?: {
+    prompt: number; // input price per token
+    completion: number; // output price per token
+  };
 }
 
 export interface GitHubFile {
