@@ -8,7 +8,8 @@ interface ModelSelectorProps {
   model?: string;
   setModel?: (model: string) => void;
   modelList: ModelInfo[];
-  apiKeys: Record<string, string>;
+  apiKeys?: Record<string, string>;
+  apiKey?: string;
   modelLoading?: string;
 }
 
