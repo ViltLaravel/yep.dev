@@ -59,7 +59,6 @@ export async function POST(req: Request) {
       fee = 0.80;
     }
     const totalAmount = Math.round((amount + fee) * 100); // in cents
-    const netCredits = amount - fee; // credits after fee
 
     // Create checkout session for one-time payment
     const checkoutSession = await stripe.checkout.sessions.create({
@@ -69,7 +68,7 @@ export async function POST(req: Request) {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: `${netCredits.toFixed(2)} AI Credits (after fee)`,
+              name: `${creditsToBuy} AI Credits`,
             },
             unit_amount: totalAmount, // in cents
           },
@@ -82,7 +81,6 @@ export async function POST(req: Request) {
       metadata: {
         userId: user.id,
         credits: creditsToBuy,
-        netCredits: netCredits.toFixed(2),
         fee: fee.toFixed(2),
         amount: amount.toFixed(2),
       },
