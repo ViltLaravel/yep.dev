@@ -160,7 +160,11 @@ export function RegisterForm() {
                 disabled={isLoading}
               />
             </div>
-            <Button className="w-full" type="submit" disabled={isLoading}>
+            <Button
+              className="w-full bg-white border border-gray-200 text-gray-900  hover:bg-gray-100"
+              type="submit"
+              disabled={isLoading}
+            >
               {isLoading ? (
                 <>
                   <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
@@ -178,7 +182,7 @@ export function RegisterForm() {
             <div className="w-full border-t border-gray-300 dark:border-gray-700" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-[#161618] dark:bg-gray-900 text-gray-500 dark:text-gray-400">
+            <span className="px-2 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400">
               Or continue with
             </span>
           </div>
@@ -187,7 +191,7 @@ export function RegisterForm() {
         <div className="flex flex-col sm:flex-row gap-2">
           <Button
             variant="outline"
-            className="w-full bg-[#1f1f23] border-none rounded-lg hover:bg-[#28282d] dark:bg-gray-900"
+            className="w-full bg-white border border-gray-200 text-gray-900  rounded-lg hover:bg-gray-100"
             type="button"
             disabled={isLoading}
             onClick={() => handleOAuthSignIn("google")}
@@ -197,7 +201,7 @@ export function RegisterForm() {
           </Button>
           <Button
             variant="outline"
-            className="w-full bg-[#1f1f23] border-none rounded-lg hover:bg-[#28282d] dark:bg-gray-900"
+            className="w-full bg-white border border-gray-200 text-gray-900  rounded-lg hover:bg-gray-100"
             type="button"
             disabled={isLoading}
             onClick={() => handleOAuthSignIn("github")}

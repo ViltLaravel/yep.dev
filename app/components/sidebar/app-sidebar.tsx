@@ -76,17 +76,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar
       collapsible="icon"
-      className="overflow-hidden [&>[data-sidebar=sidebar]]:flex-row"
+      className="overflow-hidden [&>[data-sidebar=sidebar]]:flex-row border-r border-gray-200"
       {...props}
     >
       <Sidebar
         collapsible="none"
-        className="!w-[calc(var(--sidebar-width-icon)_+_1px)] border-r border-[#313133] flex flex-col"
+        className="!w-[calc(var(--sidebar-width-icon)_+_1px)] border-r border-gray-200 flex flex-col"
       >
         <SidebarHeader className="p-2">
-          {!open && (
-            <SidebarTrigger className="-ml-1" onClick={() => setOpen(true)} />
-          )}
+          {!open && <SidebarTrigger onClick={() => setOpen(true)} />}
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
@@ -96,7 +94,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarFooter>
           <SidebarMenu>
             {data.navMain.map((item) => (
-              <SidebarMenuItem key={item?.title ?? ''}>
+              <SidebarMenuItem key={item?.title ?? ""}>
                 <SidebarMenuButton
                   size="lg"
                   onClick={() => {
@@ -118,10 +116,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </Sidebar>
 
       <Sidebar collapsible="none" className="hidden flex-1 md:flex">
-        <SidebarHeader className="gap-3.5 border-b border-[#313133] p-4">
+        <SidebarHeader className="gap-3.5 border-b border-gray-200 p-4">
           <div className="flex w-full items-center justify-between">
             <div
-              className="text-base font-medium text-white cursor-pointer"
+              className="text-base font-medium text-gray-900 cursor-pointer"
               onClick={handleHomepageClick}
             >
               Yep dev
@@ -136,17 +134,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup className="px-0">
-            <SidebarGroupLabel className="px-4 text-gray-400">
+            <SidebarGroupLabel className="px-4 text-gray-500">
               Recent Conversations
             </SidebarGroupLabel>
             <ScrollArea className="h-[calc(100vh_-_120px)]">
               <SidebarGroupContent>
                 {isLoading ? (
-                  <p className="p-4 text-sm text-gray-400">
+                  <p className="p-4 text-sm text-gray-500">
                     Loading conversations...
                   </p>
                 ) : conversations.length === 0 ? (
-                  <p className="p-4 text-sm text-gray-400">
+                  <p className="p-4 text-sm text-gray-500">
                     No conversations found
                   </p>
                 ) : (
@@ -161,9 +159,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             handleConversationClick(conversation.id)
                           }
                           className={cn(
-                            "justify-start flex flex-col items-start hover:bg-[#28282a] active:bg-[#28282a] active:text-white hover:text-white rounded-md p-0",
+                            "justify-start flex flex-col items-start hover:bg-gray-100 active:bg-gray-200 active:text-gray-900 hover:text-gray-900 rounded-md p-0 ",
                             {
-                              "bg-[#28282a] rounded-md shadow-sm":
+                              "bg-gray-100 rounded-md":
                                 activeId === conversation.id,
                             }
                           )}

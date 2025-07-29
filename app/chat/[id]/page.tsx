@@ -1035,29 +1035,29 @@ function Workspace() {
     return <LoadingOverlay error={null} />;
   }
 
-  if (!promptSubmitted && !openRouterError && !showErrorNotification) {
-    return (
-      <div className="flex min-h-screen items-center justify-center p-4 md:p-8 bg-[#101012]">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4 text-white">Yep Chat Bot</h1>
-          <p className="text-gray-500">Processing message...</p>
-          {/* Add debug info for troubleshooting */}
-          {process.env.NODE_ENV === "development" && (
-            <div className="mt-4 text-xs text-gray-600">
-              <p>promptSubmitted: {String(promptSubmitted)}</p>
-              <p>openRouterError: {openRouterError ? "YES" : "NO"}</p>
-              <p>showErrorNotification: {String(showErrorNotification)}</p>
-              <p>messages.length: {messages.length}</p>
-              <p>sendFirst: {String(sendFirst)}</p>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
+  // Debugging
+  // if (!promptSubmitted && !openRouterError && !showErrorNotification) {
+  //   return (
+  //     <div className="flex min-h-screen items-center justify-center p-4 md:p-8 bg-white ">
+  //       <div className="text-center">
+  //         <h1 className="text-2xl font-bold mb-4 text-white">Yep Chat Bot</h1>
+  //         <p className="text-gray-500">Processing message...</p>
+  //         {process.env.NODE_ENV === "development" && (
+  //           <div className="mt-4 text-xs text-gray-600">
+  //             <p>promptSubmitted: {String(promptSubmitted)}</p>
+  //             <p>openRouterError: {openRouterError ? "YES" : "NO"}</p>
+  //             <p>showErrorNotification: {String(showErrorNotification)}</p>
+  //             <p>messages.length: {messages.length}</p>
+  //             <p>sendFirst: {String(sendFirst)}</p>
+  //           </div>
+  //         )}
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
-    <div className="flex h-screen bg-[#101012] text-sm relative overflow-hidden">
+    <div className="flex h-screen bg-white text-sm relative overflow-hidden ">
       <ResizablePanelGroup direction="horizontal" className="h-full">
         <ResizablePanel defaultSize={40} minSize={25}>
           <ChatPanel
@@ -1083,7 +1083,7 @@ function Workspace() {
             onModelChange={handleModelChange}
           />
         </ResizablePanel>
-        <ResizableHandle className="w-[1px] bg-[#313133]" />
+        <ResizableHandle className="w-[1px] bg-gray-200" />
         <ResizablePanel defaultSize={60} minSize={30}>
           <Workbench
             mainTerminalRef={mainTerminalRef}

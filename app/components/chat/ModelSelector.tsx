@@ -161,7 +161,7 @@ export const ModelSelector = ({
 
   if (modelList.length === 0) {
     return (
-      <div className="p-2 rounded-md border border-[#313133] bg-[#161618] transition-all cursor-pointer ">
+      <div className="p-2 rounded-md border border-gray-200 bg-white transition-all cursor-pointer ">
         <p className="text-left">Loading models...</p>
       </div>
     );
@@ -178,9 +178,9 @@ export const ModelSelector = ({
           <div
             ref={triggerRef}
             className={classNames(
-              "w-full p-2 rounded-md border border-[#313133]",
+              "w-full p-2 rounded-md border border-gray-200",
               "transition-all cursor-pointer flex items-center justify-between",
-              "bg-[#161618]",
+              "bg-white",
               isModelDropdownOpen
                 ? "ring-2 ring-bolt-elements-focus"
                 : "focus:ring-2 focus:ring-bolt-elements-focus",
@@ -219,7 +219,7 @@ export const ModelSelector = ({
         <>
           <div
             ref={searchOverlayRef}
-            className="fixed z-[100000] flex items-center justify-between bg-[#161618] border border-[#313133] rounded-md ring-2 ring-bolt-elements-focus"
+            className="fixed z-[100000] flex items-center justify-between bg-white border border-gray-200 rounded-md"
             style={{
               left: triggerRect.left,
               top: triggerRect.top,
@@ -254,7 +254,7 @@ export const ModelSelector = ({
 
           <div
             ref={dropdownListContainerRef}
-            className="fixed z-[99999] bg-[#161618] shadow-2xl border border-[#313133] rounded-md"
+            className="fixed z-[99999] bg-white border border-gray-200 rounded-md"
             style={{
               left: triggerRect.left,
               width: triggerRect.width,
@@ -269,7 +269,7 @@ export const ModelSelector = ({
           >
             <div
               className={classNames(
-                "max-h-60 overflow-y-auto bg-[#161618]",
+                "max-h-60 overflow-y-auto bg-white",
                 "rounded-md",
                 "sm:scrollbar-none",
                 "[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar]:h-2",

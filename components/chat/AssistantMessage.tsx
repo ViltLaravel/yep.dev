@@ -1,31 +1,51 @@
-'use client';
+"use client";
 
-import { setSelectedFile as setSelectedWorkbenchFile, setWorkbenchView } from '@/app/lib/stores/workbenchStore';
-import { Markdown } from '@/components/Markdown';
-import { ProgressIndicator } from '@/lib/types/index';
-import { motion } from 'framer-motion';
-import { Brain, FileText, Loader2, MessageSquare, WrapText } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import {
+  setSelectedFile as setSelectedWorkbenchFile,
+  setWorkbenchView,
+} from "@/app/lib/stores/workbenchStore";
+import { Markdown } from "@/components/Markdown";
+import { ProgressIndicator } from "@/lib/types/index";
+import { motion } from "framer-motion";
+import {
+  BotIcon,
+  Brain,
+  FileText,
+  Loader2,
+  MessageSquare,
+  WrapText,
+} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
-const getTextContent = (content: string | Array<{ type: 'text' | 'image_url'; text?: string; image_url?: { url: string } }>): string => {
-  if (typeof content === 'string') {
+const getTextContent = (
+  content:
+    | string
+    | Array<{
+        type: "text" | "image_url";
+        text?: string;
+        image_url?: { url: string };
+      }>
+): string => {
+  if (typeof content === "string") {
     return content;
   }
   // For array content, extract text from text blocks
   return content
-    .filter(item => item.type === 'text' && item.text)
-    .map(item => item.text)
-    .join(' ');
+    .filter((item) => item.type === "text" && item.text)
+    .map((item) => item.text)
+    .join(" ");
 };
 
 interface AssistantMessageProps {
-  content: string | Array<{
-    type: 'text' | 'image_url';
-    text?: string;
-    image_url?: {
-      url: string;
-    };
-  }>;
+  content:
+    | string
+    | Array<{
+        type: "text" | "image_url";
+        text?: string;
+        image_url?: {
+          url: string;
+        };
+      }>;
   isStreaming?: boolean;
   activeFile?: string | null;
   completedFiles?: Set<string>;
@@ -35,12 +55,14 @@ interface AssistantMessageProps {
 }
 
 // Helper function to process content with bolt artifacts and actions
-const processContent = (content: string): { beforeBolt: string; afterBolt: string } => {
-  const result = { beforeBolt: '', afterBolt: '' };
+const processContent = (
+  content: string
+): { beforeBolt: string; afterBolt: string } => {
+  const result = { beforeBolt: "", afterBolt: "" };
   let cleanContent = content.trim();
 
   result.beforeBolt = cleanContent;
-  result.afterBolt = '';
+  result.afterBolt = "";
 
   return result;
 };
@@ -49,7 +71,7 @@ const processContent = (content: string): { beforeBolt: string; afterBolt: strin
 const FileStreamingStatus = ({
   activeFile,
   completedFiles,
-  isStreaming
+  isStreaming,
 }: {
   activeFile?: string | null;
   completedFiles?: Set<string>;
@@ -57,12 +79,12 @@ const FileStreamingStatus = ({
 }) => {
   const handleFileClick = (filePath: string) => {
     setSelectedWorkbenchFile(filePath);
-    setWorkbenchView('Editor');
+    setWorkbenchView("Editor");
   };
 
   const getDisplayPath = (filePath: string) => {
     // Remove the work directory prefix for cleaner display
-    return filePath.replace('/home/project/', '').replace(/^\//, '');
+    return filePath.replace("/home/project/", "").replace(/^\//, "");
   };
 
   if (activeFile && isStreaming) {
@@ -92,7 +114,10 @@ const FileStreamingStatus = ({
         animate={{ opacity: 1, y: 0 }}
       >
         {Array.from(completedFiles).map((filePath) => (
-          <div key={filePath} className="flex items-center gap-2 p-2 bg-green-600/10 border border-green-500/20 rounded-lg">
+          <div
+            key={filePath}
+            className="flex items-center gap-2 p-2 bg-green-600/10 border border-green-500/20 rounded-lg"
+          >
             <FileText className="w-4 h-4 text-green-400" />
             <span className="text-sm text-green-400">Updated</span>
             <button
@@ -110,16 +135,22 @@ const FileStreamingStatus = ({
   return null;
 };
 
-const AiStreamState = ({ isStreaming, progress }: { isStreaming: boolean; progress?: ProgressIndicator[] }) => {
+const AiStreamState = ({
+  isStreaming,
+  progress,
+}: {
+  isStreaming: boolean;
+  progress?: ProgressIndicator[];
+}) => {
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Determine current state based on progress data
   const currentState = useMemo(() => {
-    if (!progress || progress.length === 0) return 'summary';
+    if (!progress || progress.length === 0) return "summary";
 
     // Find the most recent in-progress item
     const inProgressItem = progress
-      .filter(item => item.status === 'in-progress')
+      .filter((item) => item.status === "in-progress")
       .sort((a, b) => b.order - a.order)[0];
 
     if (inProgressItem) {
@@ -128,16 +159,16 @@ const AiStreamState = ({ isStreaming, progress }: { isStreaming: boolean; progre
 
     // If no in-progress items, find the most recent completed item
     const lastCompleted = progress
-      .filter(item => item.status === 'complete')
+      .filter((item) => item.status === "complete")
       .sort((a, b) => b.order - a.order)[0];
 
     if (lastCompleted) {
-      if (lastCompleted.label === 'summary') return 'context';
-      if (lastCompleted.label === 'context') return 'response';
-      return 'thinking';
+      if (lastCompleted.label === "summary") return "context";
+      if (lastCompleted.label === "context") return "response";
+      return "thinking";
     }
 
-    return 'summary';
+    return "summary";
   }, [progress]);
 
   // Handle transitions
@@ -156,18 +187,18 @@ const AiStreamState = ({ isStreaming, progress }: { isStreaming: boolean; progre
   let displayText;
 
   switch (currentState) {
-    case 'summary':
+    case "summary":
       icon = <WrapText className="w-4 h-4 text-[#969798]" />;
-      displayText = 'Creating summary';
+      displayText = "Creating summary";
       break;
-    case 'context':
+    case "context":
     // icon = <BookDashed className="w-4 h-4 text-[#969798]" />;
     // displayText = 'Selecting context';
     // break;
-    case 'response':
+    case "response":
     default:
       icon = <Brain className="w-4 h-4 text-[#969798]" />;
-      displayText = 'Thinking...';
+      displayText = "Thinking...";
   }
 
   // Calculate text length-based dynamic spread (similar to text-shimmer component)
@@ -175,27 +206,27 @@ const AiStreamState = ({ isStreaming, progress }: { isStreaming: boolean; progre
 
   return (
     <motion.div
-      className={`flex items-center gap-2 mb-3 ${isTransitioning ? 'blur-sm' : 'blur-0'}`}
-      animate={{ filter: isTransitioning ? 'blur(4px)' : 'blur(0px)' }}
-      transition={{ duration: 0.3, ease: 'easeInOut' }}
+      className={`flex items-center gap-2 mb-3 ${
+        isTransitioning ? "blur-sm" : "blur-0"
+      }`}
+      animate={{ filter: isTransitioning ? "blur(4px)" : "blur(0px)" }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
     >
-      <div className={`${isTransitioning ? '' : 'animate-pulse'}`}>
-        {icon}
-      </div>
+      <div className={`${isTransitioning ? "" : "animate-pulse"}`}>{icon}</div>
       <motion.span
         className="text-sm font-medium text-transparent bg-clip-text relative inline-block"
-        initial={{ backgroundPosition: '100% center' }}
-        animate={{ backgroundPosition: '0% center' }}
+        initial={{ backgroundPosition: "100% center" }}
+        animate={{ backgroundPosition: "0% center" }}
         transition={{
           repeat: Infinity,
           duration: 2,
-          ease: 'linear',
-          repeatType: 'loop'
+          ease: "linear",
+          repeatType: "loop",
         }}
         style={{
           backgroundImage: `linear-gradient(90deg, rgba(0,0,0,0) calc(50% - ${spread}px), #fefefe, rgba(0,0,0,0) calc(50% + ${spread}px)), linear-gradient(#969798, #969798)`,
-          backgroundSize: '250% 100%, 100% 100%',
-          backgroundRepeat: 'no-repeat, no-repeat',
+          backgroundSize: "250% 100%, 100% 100%",
+          backgroundRepeat: "no-repeat, no-repeat",
         }}
       >
         {displayText}
@@ -211,7 +242,7 @@ export const AssistantMessage = ({
   completedFiles,
   activeCommand,
   completedCommands,
-  progress = []
+  progress = [],
 }: AssistantMessageProps) => {
   const displayContent = useMemo(() => {
     if (!content) return null;
@@ -221,13 +252,20 @@ export const AssistantMessage = ({
     let parsedCompletedFiles = completedFiles;
     let cleanedContent = textContent;
 
-    if (!completedFiles && !isStreaming && textContent.includes('file://') || textContent.includes('file://')) {
-      const fileLinks = textContent.match(/\[Updated ([^\]]+)\]\(file:\/\/([^)]+)\)/g);
+    if (
+      (!completedFiles && !isStreaming && textContent.includes("file://")) ||
+      textContent.includes("file://")
+    ) {
+      const fileLinks = textContent.match(
+        /\[Updated ([^\]]+)\]\(file:\/\/([^)]+)\)/g
+      );
       if (fileLinks) {
-        const extractedFiles = fileLinks.map(link => {
-          const match = link.match(/\[Updated [^\]]+\]\(file:\/\/([^)]+)\)/);
-          return match ? match[1] : null;
-        }).filter(Boolean) as string[];
+        const extractedFiles = fileLinks
+          .map((link) => {
+            const match = link.match(/\[Updated [^\]]+\]\(file:\/\/([^)]+)\)/);
+            return match ? match[1] : null;
+          })
+          .filter(Boolean) as string[];
 
         if (extractedFiles.length > 0) {
           parsedCompletedFiles = new Set(extractedFiles);
@@ -250,26 +288,31 @@ export const AssistantMessage = ({
     }
 
     return null;
-  }, [content, isStreaming, activeFile, completedFiles, activeCommand, completedCommands]);
+  }, [
+    content,
+    isStreaming,
+    activeFile,
+    completedFiles,
+    activeCommand,
+    completedCommands,
+  ]);
 
   return (
     <motion.div
-      className="flex flex-col w-full mb-4"
+      className="flex flex-col w-full mb-5" // more vertical margin
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
       <div className="flex w-full items-start gap-2">
-        <div className="h-6 w-6 rounded-full bg-[#2a2a2c] flex-shrink-0 flex items-center justify-center">
-          <MessageSquare className="w-3.5 h-3.5 text-[#969798]" />
+        <div className="h-8 w-8 p-1 rounded-full border-none bg-white flex-shrink-0 flex items-center justify-center text-base font-semibold text-gray-500 mr-2">
+          <BotIcon />
         </div>
-        <div className="flex-1 text-[#f3f6f6] overflow-hidden break-words whitespace-pre-wrap overflow-wrap-anywhere">
+        <div className="flex-1 bg-white border-none shadow-sm py-3 px-5 rounded-xl text-gray-900 max-w-2xl">
           {isStreaming && !content && (
             <AiStreamState isStreaming={isStreaming} progress={progress} />
           )}
-
           {displayContent}
-
         </div>
       </div>
     </motion.div>

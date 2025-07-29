@@ -9,7 +9,7 @@ export default function Navbar() {
         <h4 className="text-xl font-extrabold w-full">Yep Dev</h4>
         <div className="w-full flex justify-end items-center">
           <Button
-            className="rounded-md bg-[#161618] hover:bg-[#202023] flex justify-center items-center"
+            className="rounded-md bg-white hover:bg-gray-100 border border-gray-200 text-gray-900  flex justify-center items-center"
             onClick={() => router.push("/login")}
           >
             Sign In

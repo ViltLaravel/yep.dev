@@ -78,7 +78,7 @@ function Chat() {
   });
 
   const handleModelChange = (newModel: string) => {
-    const baseModel = newModel.replace(':online', '');
+    const baseModel = newModel.replace(":online", "");
     setModel(baseModel);
     Cookies.set("selectedModel", baseModel, { expires: 30 });
   };
@@ -332,7 +332,7 @@ function Chat() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-900 from-10% to-black to-90% min-h-screen  text-white overflow-y-auto">
+    <div className="bg-white min-h-screen text-gray-900 overflow-y-auto ">
       {/* Navbar */}
       {status === "unauthenticated" ? (
         <Navbar />
@@ -341,7 +341,12 @@ function Chat() {
           <h4 className="text-xl font-extrabold w-full max-w-36">Yep Dev</h4>
           <div className="md:hidden flex justify-end items-center gap-2">
             <div className="text-sm">
-              Available Credits: {loadingCredits ? "..." : creditBalance ? creditBalance.toFixed(2) : 0}
+              Available Credits:{" "}
+              {loadingCredits
+                ? "..."
+                : creditBalance
+                ? creditBalance.toFixed(2)
+                : 0}
             </div>
             <SidebarMenu className="flex w-fit ">
               <SidebarMenuItem>
@@ -358,7 +363,7 @@ function Chat() {
                     </SidebarMenuButton>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
-                    className="w-[--radix-dropdown-menu-trigger-width] min-w-56 bg-black rounded-lg border-none"
+                    className="w-[--radix-dropdown-menu-trigger-width] min-w-56 bg-white rounded-lg border border-gray-200"
                     side="bottom"
                     align="end"
                     sideOffset={4}
@@ -368,9 +373,7 @@ function Chat() {
                       <User />
                       {session?.user?.email}
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={handleBuyCredits}
-                    >
+                    <DropdownMenuItem onClick={handleBuyCredits}>
                       <Sparkle />
                       Buy Credits
                     </DropdownMenuItem>
@@ -394,16 +397,21 @@ function Chat() {
           <div className="w-full justify-end items-center gap-4 hidden md:flex">
             <div className="text-sm">{session?.user?.email}</div>
             <div className="text-sm">
-            Available Credits: {loadingCredits ? "..." : creditBalance ? creditBalance.toFixed(2) : 0}
+              Available Credits:{" "}
+              {loadingCredits
+                ? "..."
+                : creditBalance
+                ? creditBalance.toFixed(2)
+                : 0}
             </div>
             <Button
-              className="rounded-md bg-[#161618] hover:bg-[#232327] shadow-sm p-3"
+              className="rounded-md bg-white hover:bg-gray-100 border border-gray-200 p-3 text-gray-900 "
               onClick={handleBuyCredits}
             >
               Buy Credits
             </Button>
             <Button
-              className="rounded-md bg-[#161618] hover:bg-[#232327] shadow-sm p-3"
+              className="rounded-md bg-white hover:bg-gray-100 border border-gray-200 p-3 text-gray-900 "
               onClick={handleLogout}
             >
               Sign Out
@@ -420,11 +428,11 @@ function Chat() {
               <h1 className="text-xl md:text-2xl lg:text-5xl font-medium tracking-tight">
                 Build any apps with Yep
               </h1>
-              <Badge className="bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border-0">
+              <Badge className="bg-blue-100 text-blue-600 border-0 ">
                 Beta
               </Badge>
             </div>
-            <p className="text-gray-400 text-center text-lg">
+            <p className="text-gray-500 text-center text-lg">
               Yep builds complete, cross-platform web apps using AI.
             </p>
           </div>
@@ -436,7 +444,7 @@ function Chat() {
             onSubmit={handleSubmit}
             className="bg-transparent w-full flex flex-col gap-4"
           >
-            <div className="bg-gradient-to-r rounded-md from-cyan-500 to-black p-[0.5px]">
+            <div className="rounded-md border border-gray-200 p-0 bg-white">
               <div className="w-full">
                 <ModelSelector
                   model={model}
@@ -447,10 +455,10 @@ function Chat() {
                 />
               </div>
             </div>
-            <div className="border border-[#313133] rounded-md bg-[#161618] shadow-sm">
+            <div className="border border-gray-200 rounded-md bg-white">
               {/* Image preview area */}
               {uploadedImages.length > 0 && (
-                <div className="mb-3 p-3 bg-[#1a1a1c] rounded-lg border border-[#313133]">
+                <div className="mb-3 p-3 bg-transparent border-none">
                   <div className="flex flex-wrap gap-2">
                     {uploadedImages.map((image, index) => (
                       <div key={index} className="relative group">
@@ -459,7 +467,7 @@ function Chat() {
                           alt={image.filename || "Uploaded image"}
                           width={80}
                           height={80}
-                          className="w-20 h-20 object-cover rounded border border-[#313133]"
+                          className="w-20 h-20 object-cover rounded border border-gray-200"
                         />
                         <button
                           onClick={() => removeImage(index)}
@@ -478,7 +486,7 @@ function Chat() {
 
               {/* Upload error display */}
               {uploadError && (
-                <div className="mb-3 p-2 bg-red-900/20 border border-red-500/30 rounded text-red-400 text-sm">
+                <div className="mb-3 p-2 bg-red-100 border border-red-200 rounded text-red-600 text-sm">
                   {uploadError}
                 </div>
               )}
@@ -512,7 +520,7 @@ function Chat() {
                       }
                     }
                   }}
-                  className="min-h-[56px] max-h-[250px] resize-none border-0 p-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-500 text-sm pr-12 overflow-y-auto"
+                  className="min-h-[56px] max-h-[250px] resize-none border-0 p-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-500 text-sm pr-12 overflow-y-auto "
                   translate="no"
                   style={{
                     transition: "height 0.1s ease",
@@ -530,7 +538,7 @@ function Chat() {
                     <Button
                       type="submit"
                       size="icon"
-                      className="h-10 w-10 rounded-full bg-blue-500 hover:bg-blue-600"
+                      className="h-10 w-10 rounded-md hover:bg-gray-200 border-none bg-gray-100 text-gray-600 "
                       disabled={
                         isStarterLoading ||
                         enhancingPrompt ||
@@ -567,7 +575,7 @@ function Chat() {
                   <Button
                     size="icon"
                     variant="ghost"
-                    className="h-8 w-8 text-[#969798] hover:text-[#f3f6f6] hover:bg-[#212122]"
+                    className="h-8 w-8 text-gray-400 hover:text-gray-600 hover:bg-gray-100 "
                     disabled={showingError || isUploading}
                     onClick={handleUploadImage}
                   >
@@ -579,7 +587,7 @@ function Chat() {
                   </Button>
                   <button
                     type="button"
-                    className="text-gray-400 hover:text-gray-300 transition-colors cursor-pointer disabled:opacity-50"
+                    className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer disabled:opacity-50 "
                     onClick={() =>
                       enhancePrompt(userPrompt, setUserPrompt, model)
                     }
@@ -596,8 +604,8 @@ function Chat() {
                     className={cn(
                       "transition-colors cursor-pointer disabled:opacity-50",
                       webSearchEnabled
-                        ? "text-blue-400 hover:text-blue-300"
-                        : "text-gray-400 hover:text-gray-300"
+                        ? "text-blue-600 hover:text-blue-500"
+                        : "text-gray-400 hover:text-gray-600"
                     )}
                     onClick={toggleWebSearch}
                     title={
@@ -613,7 +621,7 @@ function Chat() {
                           webSearchEnabled && "text-blue-400"
                         )}
                       />
-                      <p className={webSearchEnabled ? "text-blue-400" : ""}>
+                      <p className={webSearchEnabled ? "text-blue-600" : ""}>
                         Search
                       </p>
                     </div>
@@ -630,7 +638,7 @@ function Chat() {
             {examplePrompts.map((example, index) => (
               <button
                 key={index}
-                className="px-3 py-1.5 flex items-center gap-1 text-sm bg-[#161618] border border-[#313133] rounded-full hover:bg-[#1e1e20] transition-colors disabled:opacity-50"
+                className="px-3 py-1.5 flex items-center gap-1 text-sm bg-white border border-gray-200 rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50 "
                 onClick={() => {
                   if (status !== "authenticated" || !session) {
                     const encodedPrompt = encodeURIComponent(example);
@@ -648,7 +656,7 @@ function Chat() {
 
         {/* Start coding section */}
         <div className="space-y-6 pt-12">
-          <h2 className="text-sm font-medium text-gray-200">
+          <h2 className="text-sm font-medium text-gray-700">
             Or start a blank app with your favorite stack
           </h2>
 
@@ -658,7 +666,7 @@ function Chat() {
                 <button
                   key={template.name}
                   onClick={() => handleTemplateClick(template)}
-                  className={`flex flex-col items-center gap-2 group hover:bg-gray-900 rounded-xl p-4 transition-colors justify-center`}
+                  className={`flex flex-col items-center gap-2 group hover:bg-gray-100 rounded-xl p-4 transition-colors justify-center `}
                   aria-label={template.label}
                 >
                   <div className="w-7 h-7 flex items-center justify-center opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-opacity">

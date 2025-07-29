@@ -8,8 +8,8 @@ export const metadata: Metadata = {
 
 export default function RegisterPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center p-4 md:p-8 bg-gradient-to-br from-blue-900 from-10% to-black to-90%">
-      <div className="mx-auto w-full max-w-md space-y-6 rounded-xl border-none bg-[#161618] p-6 shadow-lg dark:border-gray-800 dark:bg-gray-950">
+    <div className="flex min-h-screen items-center justify-center p-4 md:p-8 bg-white ">
+      <div className="mx-auto w-full max-w-md space-y-6 rounded-xl border border-gray-200 bg-white p-6 ">
         <RegisterForm />
       </div>
     </div>
