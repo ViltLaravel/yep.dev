@@ -8,6 +8,7 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { IoLogoGoogle } from "react-icons/io5";
 
 interface LoginFormProps {
   callbackUrl?: string;
@@ -107,8 +108,8 @@ export function LoginForm({ callbackUrl = "/" }: LoginFormProps) {
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
-                className="text-gray-900"
-                placeholder="m@example.com"
+                className="text-gray-900 rounded-full"
+                placeholder="Email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -129,7 +130,8 @@ export function LoginForm({ callbackUrl = "/" }: LoginFormProps) {
               <Input
                 id="password"
                 type="password"
-                className="text-gray-900"
+                placeholder="Password"
+                className="text-gray-900 rounded-full"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -137,7 +139,7 @@ export function LoginForm({ callbackUrl = "/" }: LoginFormProps) {
               />
             </div>
             <Button
-              className="w-full bg-white border border-gray-200 text-gray-900  hover:bg-gray-100"
+              className="w-full bg-white border border-gray-200 rounded-full text-gray-900  hover:bg-gray-100"
               type="submit"
               disabled={isLoading}
             >
@@ -167,7 +169,7 @@ export function LoginForm({ callbackUrl = "/" }: LoginFormProps) {
         <div className="flex flex-col sm:flex-row gap-2">
           <Button
             variant="outline"
-            className="w-full bg-white border border-gray-200 text-gray-900  rounded-lg hover:bg-gray-100"
+            className="w-full bg-white border rounded-full border-gray-200 text-gray-900 hover:bg-gray-100"
             type="button"
             disabled={loading.type === "google" && loading.isLoading}
             onClick={() => handleOAuthSignIn("google")}
@@ -175,12 +177,12 @@ export function LoginForm({ callbackUrl = "/" }: LoginFormProps) {
             {loading.type === "google" && loading.isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            <Icons.google className="mr-2 h-4 w-4" />
+            <IoLogoGoogle className="mr-2 h-4 w-4" />
             Google
           </Button>
           <Button
             variant="outline"
-            className="w-full bg-white border border-gray-200 text-gray-900  rounded-lg hover:bg-gray-100"
+            className="w-full bg-white border border-gray-200 text-gray-900  rounded-full hover:bg-gray-100"
             type="button"
             disabled={isLoading}
             onClick={() => handleOAuthSignIn("github")}

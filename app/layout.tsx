@@ -22,7 +22,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${poppins.className}`}>
         <AuthProvider>
-          <div className="min-h-screen ">{children}</div>
+          <div className="min-h-screen w-full">{children}</div>
         </AuthProvider>
       </body>
     </html>

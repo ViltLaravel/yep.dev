@@ -8,6 +8,7 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { IoLogoGoogle } from "react-icons/io5";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -112,8 +113,8 @@ export function RegisterForm() {
               <Input
                 id="name"
                 name="name"
-                className="text-gray-900"
-                placeholder="John Doe"
+                className="text-gray-900 rounded-full"
+                placeholder="Name"
                 value={formData.name}
                 onChange={handleChange}
                 required
@@ -126,8 +127,8 @@ export function RegisterForm() {
                 id="email"
                 name="email"
                 type="email"
-                className="text-gray-900"
-                placeholder="m@example.com"
+                className="text-gray-900 rounded-full"
+                placeholder="Email"
                 value={formData.email}
                 onChange={handleChange}
                 required
@@ -140,7 +141,8 @@ export function RegisterForm() {
                 id="password"
                 name="password"
                 type="password"
-                className="text-gray-900"
+                placeholder="Password"
+                className="text-gray-900 rounded-full"
                 value={formData.password}
                 onChange={handleChange}
                 required
@@ -153,7 +155,8 @@ export function RegisterForm() {
                 id="confirmPassword"
                 name="confirmPassword"
                 type="password"
-                className="text-gray-900"
+                placeholder="Confirm Password"
+                className="text-gray-900 rounded-full"
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
@@ -161,7 +164,7 @@ export function RegisterForm() {
               />
             </div>
             <Button
-              className="w-full bg-white border border-gray-200 text-gray-900  hover:bg-gray-100"
+              className="w-full bg-white border border-gray-200 rounded-full text-gray-900  hover:bg-gray-100"
               type="submit"
               disabled={isLoading}
             >
@@ -191,17 +194,17 @@ export function RegisterForm() {
         <div className="flex flex-col sm:flex-row gap-2">
           <Button
             variant="outline"
-            className="w-full bg-white border border-gray-200 text-gray-900  rounded-lg hover:bg-gray-100"
+            className="w-full bg-white border border-gray-200 text-gray-900  rounded-full hover:bg-gray-100"
             type="button"
             disabled={isLoading}
             onClick={() => handleOAuthSignIn("google")}
           >
-            <Icons.google className="mr-2 h-4 w-4" />
+            <IoLogoGoogle className="mr-2 h-4 w-4" />
             Google
           </Button>
           <Button
             variant="outline"
-            className="w-full bg-white border border-gray-200 text-gray-900  rounded-lg hover:bg-gray-100"
+            className="w-full bg-white border border-gray-200 text-gray-900  rounded-full hover:bg-gray-100"
             type="button"
             disabled={isLoading}
             onClick={() => handleOAuthSignIn("github")}

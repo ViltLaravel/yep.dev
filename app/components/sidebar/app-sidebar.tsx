@@ -122,7 +122,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="text-base font-medium text-gray-900 cursor-pointer"
               onClick={handleHomepageClick}
             >
-              Yep dev
+              Yep Dev
             </div>
             {open && (
               <SidebarTrigger

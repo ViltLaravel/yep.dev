@@ -11,6 +11,7 @@ interface ModelSelectorProps {
   apiKeys?: Record<string, string>;
   apiKey?: string;
   modelLoading?: string;
+  isMain?: boolean;
 }
 
 export const ModelSelector = ({
@@ -18,6 +19,7 @@ export const ModelSelector = ({
   setModel,
   modelList,
   modelLoading,
+  isMain,
 }: ModelSelectorProps) => {
   const [modelSearchQuery, setModelSearchQuery] = useState("");
   const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false);
@@ -178,7 +180,9 @@ export const ModelSelector = ({
           <div
             ref={triggerRef}
             className={classNames(
-              "w-full p-2 rounded-md border border-gray-200",
+              `w-full p-2 border border-gray-200 ${
+                isMain ? "rounded-full shadow-sm" : "rounded-md"
+              }`,
               "transition-all cursor-pointer flex items-center justify-between",
               "bg-white",
               isModelDropdownOpen
@@ -202,7 +206,7 @@ export const ModelSelector = ({
             aria-haspopup="listbox"
             tabIndex={isModelDropdownOpen ? -1 : 0}
           >
-            <div className="truncate flex-grow">
+            <div className="truncate flex-grow justify-center items-center text-center">
               {modelList.find((m) => m.name === model)?.label || "Select model"}
             </div>
             <div
@@ -219,7 +223,9 @@ export const ModelSelector = ({
         <>
           <div
             ref={searchOverlayRef}
-            className="fixed z-[100000] flex items-center justify-between bg-white border border-gray-200 rounded-md"
+            className={`fixed z-[100000] flex items-center justify-between bg-white border border-gray-200 ${
+              isMain ? "rounded-full" : "rounded-md"
+            }`}
             style={{
               left: triggerRect.left,
               top: triggerRect.top,

@@ -19,10 +19,18 @@ import Cookies from "js-cookie";
 import {
   ArrowUp,
   Image as ImageIcon,
+  Link,
   Loader2,
   LogOut,
+  LucideAppWindow,
   LucideArrowRight,
+  LucideBox,
+  LucideBriefcase,
+  LucideClipboard,
+  LucideLogOut,
   LucideMenu,
+  LucideMessageCircle,
+  LucideShoppingCart,
   Sparkle,
   User,
   X,
@@ -235,11 +243,26 @@ function Chat() {
   };
 
   const examplePrompts = [
-    "A todo app with React and TypeScript",
-    "E-commerce dashboard with Next.js",
-    "Blog with Astro and Tailwind",
-    "Chat app with React and Firebase",
-    "Job board with Express and MongoDB",
+    {
+      name: "A todo app with React and TypeScript",
+      icon: <LucideClipboard size={15} />,
+    },
+    {
+      name: "E-commerce dashboard with Next.js",
+      icon: <LucideShoppingCart size={15} />,
+    },
+    {
+      name: "Blog with Astro and Tailwind",
+      icon: <LucideBox size={15} />,
+    },
+    {
+      name: "Chat app with React and Firebase",
+      icon: <LucideMessageCircle size={15} />,
+    },
+    {
+      name: "Job board with Express and MongoDB",
+      icon: <LucideBriefcase size={15} />,
+    },
   ];
 
   const handleLogout = async () => {
@@ -332,12 +355,12 @@ function Chat() {
   };
 
   return (
-    <div className="bg-white min-h-screen text-gray-900 overflow-y-auto ">
+    <div className="bg-white min-h-screen text-gray-900 w-full h-full">
       {/* Navbar */}
       {status === "unauthenticated" ? (
         <Navbar />
       ) : (
-        <header className="flex justify-between items-center p-3">
+        <header className="flex w-full h-16 top-0 sticky justify-between items-center p-3">
           <h4 className="text-xl font-extrabold w-full max-w-36">Yep Dev</h4>
           <div className="md:hidden flex justify-end items-center gap-2">
             <div className="text-sm">
@@ -405,278 +428,401 @@ function Chat() {
                 : 0}
             </div>
             <Button
-              className="rounded-md bg-white hover:bg-gray-100 border border-gray-200 p-3 text-gray-900 "
+              className="rounded-full shadow-sm bg-white hover:bg-gray-100 border border-gray-200 p-3 text-gray-900 "
               onClick={handleBuyCredits}
             >
               Buy Credits
             </Button>
             <Button
-              className="rounded-md bg-white hover:bg-gray-100 border border-gray-200 p-3 text-gray-900 "
+              className="rounded-full shadow-sm bg-white hover:bg-gray-100 border border-gray-200 p-3 text-gray-900 "
               onClick={handleLogout}
             >
-              Sign Out
+              Sign Out <LucideLogOut size={15} />
             </Button>
           </div>
         </header>
       )}
 
-      <div className="max-w-4xl mx-auto px-6 py-8 flex flex-col gap-10">
-        {/* Heading */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 lg:gap-4 flex-col  mt-8">
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl md:text-2xl lg:text-5xl font-medium tracking-tight">
-                Build any apps with Yep
-              </h1>
-              <Badge className="bg-blue-100 text-blue-600 border-0 ">
-                Beta
-              </Badge>
+      <div className="w-full h-full px-6 pb-6 overflow-y-auto">
+        <div className="w-full h-full bg-[#FAFAFA] rounded-3xl">
+          <div className="max-w-4xl mx-auto h-full px-6 py-8 flex flex-col gap-10">
+            {/* Heading */}
+            <div className="h-full w-full">
+              <div className="flex items-center gap-2 lg:gap-4 flex-col  mt-8">
+                <div className="flex items-center gap-2">
+                  <h1 className="text-xl md:text-2xl lg:text-5xl font-medium tracking-tight">
+                    Build any apps with Yep
+                  </h1>
+                  <Badge className="bg-blue-100 text-blue-600 border-0 ">
+                    Beta
+                  </Badge>
+                </div>
+                <p className="text-gray-500 text-center text-lg">
+                  Yep builds complete, cross-platform web apps using AI.
+                </p>
+              </div>
             </div>
-            <p className="text-gray-500 text-center text-lg">
-              Yep builds complete, cross-platform web apps using AI.
-            </p>
-          </div>
-        </div>
 
-        {/* Main prompt area */}
-        <div className="w-full pt-4">
-          <form
-            onSubmit={handleSubmit}
-            className="bg-transparent w-full flex flex-col gap-4"
-          >
-            <div className="rounded-md border border-gray-200 p-0 bg-white">
-              <div className="w-full">
+            {/* Main prompt area */}
+            <div className="w-full flex flex-col gap-3 h-full">
+              <div className="w-full text-sm md:hidden">
                 <ModelSelector
                   model={model}
+                  isMain={true}
                   setModel={handleModelChange}
                   modelList={modelList}
                   apiKey={process.env.OPENROUTER_API_KEY}
                   modelLoading={isModelLoading}
                 />
               </div>
-            </div>
-            <div className="border border-gray-200 rounded-md bg-white">
-              {/* Image preview area */}
-              {uploadedImages.length > 0 && (
-                <div className="mb-3 p-3 bg-transparent border-none">
-                  <div className="flex flex-wrap gap-2">
-                    {uploadedImages.map((image, index) => (
-                      <div key={index} className="relative group">
-                        <Image
-                          src={image.url}
-                          alt={image.filename || "Uploaded image"}
-                          width={80}
-                          height={80}
-                          className="w-20 h-20 object-cover rounded border border-gray-200"
-                        />
-                        <button
-                          onClick={() => removeImage(index)}
-                          className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                        <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 rounded-b truncate">
-                          {image.filename}
-                        </div>
+              <form
+                onSubmit={handleSubmit}
+                className="bg-transparent w-full flex flex-col gap-4"
+              >
+                <div className="border border-gray-200 rounded-3xl p-4 flex flex-col gap-2 shadow-sm bg-white">
+                  {/* Image preview area */}
+                  {uploadedImages.length > 0 && (
+                    <div className="mb-3 p-3 bg-transparent border-none">
+                      <div className="flex flex-wrap gap-2">
+                        {uploadedImages.map((image, index) => (
+                          <div key={index} className="relative group">
+                            <Image
+                              src={image.url}
+                              alt={image.filename || "Uploaded image"}
+                              width={80}
+                              height={80}
+                              className="w-20 h-20 object-cover rounded border border-gray-200"
+                            />
+                            <button
+                              onClick={() => removeImage(index)}
+                              className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 rounded-b truncate">
+                              {image.filename}
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+                    </div>
+                  )}
 
-              {/* Upload error display */}
-              {uploadError && (
-                <div className="mb-3 p-2 bg-red-100 border border-red-200 rounded text-red-600 text-sm">
-                  {uploadError}
-                </div>
-              )}
+                  {/* Upload error display */}
+                  {uploadError && (
+                    <div className="mb-3 p-2 bg-red-100 border border-red-200 rounded text-red-600 text-sm">
+                      {uploadError}
+                    </div>
+                  )}
 
-              <div className="p-3 relative">
-                <Textarea
-                  ref={textareaRef}
-                  placeholder="An app that helps me plan my day"
-                  value={userPrompt}
-                  onChange={(e) => setUserPrompt(e.target.value)}
-                  onPaste={async (event) => {
-                    const items = event.clipboardData?.items;
-                    if (!items) return;
+                  <div className="w-full h-full relative">
+                    <Textarea
+                      ref={textareaRef}
+                      placeholder="An app that helps me plan my day"
+                      value={userPrompt}
+                      onChange={(e) => setUserPrompt(e.target.value)}
+                      onPaste={async (event) => {
+                        const items = event.clipboardData?.items;
+                        if (!items) return;
 
-                    for (const item of Array.from(items)) {
-                      if (item.type.startsWith("image/")) {
-                        event.preventDefault();
-                        clearError();
+                        for (const item of Array.from(items)) {
+                          if (item.type.startsWith("image/")) {
+                            event.preventDefault();
+                            clearError();
 
-                        const file = item.getAsFile();
-                        if (file) {
-                          const uploadedImage = await uploadImage(file);
-                          if (uploadedImage) {
-                            setUploadedImages((prev) => [
-                              ...prev,
-                              uploadedImage,
-                            ]);
+                            const file = item.getAsFile();
+                            if (file) {
+                              const uploadedImage = await uploadImage(file);
+                              if (uploadedImage) {
+                                setUploadedImages((prev) => [
+                                  ...prev,
+                                  uploadedImage,
+                                ]);
+                              }
+                            }
+                            break;
                           }
                         }
-                        break;
-                      }
-                    }
-                  }}
-                  className="min-h-[56px] max-h-[250px] resize-none border-0 p-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-500 text-sm pr-12 overflow-y-auto "
-                  translate="no"
-                  style={{
-                    transition: "height 0.1s ease",
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSubmit(e);
-                    }
-                  }}
-                  disabled={creditBalance !== null && creditBalance <= 0}
-                />
-                {(userPrompt.length > 0 || isStarterLoading) && (
-                  <div className="absolute top-3 right-3">
-                    <Button
-                      type="submit"
-                      size="icon"
-                      className="h-10 w-10 rounded-md hover:bg-gray-200 border-none bg-gray-100 text-gray-600 "
-                      disabled={
-                        isStarterLoading ||
-                        enhancingPrompt ||
-                        !userPrompt.trim() ||
-                        (creditBalance !== null && creditBalance <= 0)
-                      }
-                    >
-                      {isStarterLoading ? (
-                        <Icons.spinner className="w-5 h-5 text-[#101012] animate-spin" />
-                      ) : (
-                        <ArrowUp className="w-5 h-5 text-[#101012]" />
-                      )}
-                    </Button>
-                  </div>
-                )}
-                {creditBalance !== null && creditBalance <= 0 && (
-                  <div className=" text-red-500 my-1 text-sm flex items-center">
-                    You&apos;ve run out of credits. Refill now to continue.
-                  </div>
-                )}
-              </div>
-
-              {/* Hidden file input */}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleFileSelect}
-                className="hidden"
-              />
-
-              <div className="flex justify-start p-3 mt-4">
-                <div className="flex items-center gap-3">
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="h-8 w-8 text-gray-400 hover:text-gray-600 hover:bg-gray-100 "
-                    disabled={showingError || isUploading}
-                    onClick={handleUploadImage}
-                  >
-                    {isUploading ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <ImageIcon className="w-4 h-4" />
-                    )}
-                  </Button>
-                  <button
-                    type="button"
-                    className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer disabled:opacity-50 "
-                    onClick={() =>
-                      enhancePrompt(userPrompt, setUserPrompt, model)
-                    }
-                    disabled={enhancingPrompt || userPrompt.length === 0}
-                  >
-                    <Icons.sparkles
-                      className={`w-4 h-4 ${
-                        enhancingPrompt ? "animate-pulse" : ""
-                      }`}
+                      }}
+                      className="min-h-[56px] max-h-[10px] resize-none border-0 p-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-500 text-sm pr-12 overflow-y-auto "
+                      translate="no"
+                      style={{
+                        transition: "height 0.1s ease",
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          handleSubmit(e);
+                        }
+                      }}
+                      disabled={creditBalance !== null && creditBalance <= 0}
                     />
-                  </button>
-                  <button
-                    type="button"
-                    className={cn(
-                      "transition-colors cursor-pointer disabled:opacity-50",
-                      webSearchEnabled
-                        ? "text-blue-600 hover:text-blue-500"
-                        : "text-gray-400 hover:text-gray-600"
-                    )}
-                    onClick={toggleWebSearch}
-                    title={
-                      webSearchEnabled
-                        ? "Disable web search"
-                        : "Enable web search"
-                    }
-                  >
-                    <div className="flex gap-1 items-center">
-                      <Icons.search
-                        className={cn(
-                          "w-4 h-4",
-                          webSearchEnabled && "text-blue-400"
+                    {(userPrompt.length > 0 || isStarterLoading) && (
+                      <Button
+                        type="submit"
+                        size="icon"
+                        className="w-fit absolute hidden lg:flex top-0 right-0 rounded-full px-4 hover:bg-[#27272b] border-none bg-[#101012] text-white"
+                        disabled={
+                          isStarterLoading ||
+                          enhancingPrompt ||
+                          !userPrompt.trim() ||
+                          (creditBalance !== null && creditBalance <= 0)
+                        }
+                      >
+                        {isStarterLoading ? (
+                          <Icons.spinner
+                            size={15}
+                            className=" text-white animate-spin"
+                          />
+                        ) : (
+                          <>
+                            <ArrowUp size={15} className="text-white" /> Send
+                          </>
                         )}
-                      />
-                      <p className={webSearchEnabled ? "text-blue-600" : ""}>
-                        Search
-                      </p>
+                      </Button>
+                    )}
+                    {creditBalance !== null && creditBalance <= 0 && (
+                      <div className=" text-red-500 my-1 text-sm flex items-center">
+                        You&apos;ve run out of credits. Refill now to continue.
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Hidden file input */}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
+
+                  <div className="flex justify-between w-full">
+                    <div className="hidden md:flex justify-start flex-row items-center w-full">
+                      <div className="w-fit text-sm">
+                        <ModelSelector
+                          model={model}
+                          isMain={true}
+                          setModel={handleModelChange}
+                          modelList={modelList}
+                          apiKey={process.env.OPENROUTER_API_KEY}
+                          modelLoading={isModelLoading}
+                        />
+                      </div>
                     </div>
-                  </button>
+                    <div className="w-full hidden lg:flex justify-end items-center gap-3">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="w-fit border border-gray-200 shadow-sm rounded-full px-3 text-black font-medium hover:text-gray-600 bg-white hover:bg-gray-100 "
+                        disabled={showingError || isUploading}
+                        onClick={handleUploadImage}
+                      >
+                        {isUploading ? (
+                          <Loader2 size={15} className=" animate-spin" />
+                        ) : (
+                          <>
+                            <Link size={15} className="" /> Attach
+                          </>
+                        )}
+                      </Button>
+                      <button
+                        type="button"
+                        className={cn(
+                          "transition-colors rounded-full shadow-sm hover:bg-gray-100 border border-gray-200 px-3 h-full cursor-pointer disabled:opacity-50",
+                          webSearchEnabled
+                            ? "text-blue-600 hover:text-blue-500"
+                            : "text-black hover:text-blue-500"
+                        )}
+                        onClick={toggleWebSearch}
+                        title={
+                          webSearchEnabled
+                            ? "Disable web search"
+                            : "Enable web search"
+                        }
+                      >
+                        <div className="flex gap-1 items-center">
+                          <Icons.search
+                            className={cn(
+                              "w-4 h-4",
+                              webSearchEnabled && "text-blue-400"
+                            )}
+                          />
+                          <p
+                            className={webSearchEnabled ? "text-blue-600" : ""}
+                          >
+                            Search
+                          </p>
+                        </div>
+                      </button>
+                      <button
+                        type="button"
+                        className="text-black flex shadow-sm rounded-full border border-gray-200 hover:bg-gray-100 h-full px-3 justify-start items-center gap-1 hover:text-gray-600 transition-colors cursor-pointer"
+                        onClick={() =>
+                          enhancePrompt(userPrompt, setUserPrompt, model)
+                        }
+                        disabled={enhancingPrompt || userPrompt.length === 0}
+                      >
+                        <Icons.sparkles
+                          size={15}
+                          className={`${
+                            enhancingPrompt ? "animate-pulse" : ""
+                          }`}
+                        />
+                        Enhance
+                      </button>
+                    </div>
+                    <div className="w-full flex lg:hidden justify-end items-center gap-2 lg:gap-3">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="w-fit text-black p-1 h-fit font-medium hover:text-gray-600"
+                        disabled={showingError || isUploading}
+                        onClick={handleUploadImage}
+                      >
+                        {isUploading ? (
+                          <Loader2 size={15} className=" animate-spin" />
+                        ) : (
+                          <>
+                            <Link size={15} className="" />
+                          </>
+                        )}
+                      </Button>
+                      <button
+                        type="button"
+                        className={cn(
+                          "transition-colors h-full cursor-pointer disabled:opacity-50",
+                          webSearchEnabled
+                            ? "text-blue-600 hover:text-blue-500"
+                            : "text-black hover:text-blue-500"
+                        )}
+                        onClick={toggleWebSearch}
+                        title={
+                          webSearchEnabled
+                            ? "Disable web search"
+                            : "Enable web search"
+                        }
+                      >
+                        <div className="flex gap-1 items-center">
+                          <Icons.search
+                            className={cn(
+                              "w-4 h-4",
+                              webSearchEnabled && "text-blue-400"
+                            )}
+                          />
+                          <p
+                            className={webSearchEnabled ? "text-blue-600" : ""}
+                          >
+                            Search
+                          </p>
+                        </div>
+                      </button>
+                      <button
+                        type="button"
+                        className="text-black flex w-fit h-fit p-1 hover:text-gray-600 transition-colors cursor-pointer"
+                        onClick={() =>
+                          enhancePrompt(userPrompt, setUserPrompt, model)
+                        }
+                        disabled={enhancingPrompt || userPrompt.length === 0}
+                      >
+                        <Icons.sparkles
+                          size={15}
+                          className={`${
+                            enhancingPrompt ? "animate-pulse text-blue-600" : ""
+                          }`}
+                        />
+                      </button>
+                      <Button
+                        type="submit"
+                        size="icon"
+                        className={`w-fit h-fit p-1 border-none rounded-lg bg-gray-200 text-white ${
+                          userPrompt.length > 0 && "bg-black"
+                        }`}
+                        disabled={
+                          isStarterLoading ||
+                          enhancingPrompt ||
+                          !userPrompt.trim() ||
+                          (creditBalance !== null && creditBalance <= 0)
+                        }
+                      >
+                        {isStarterLoading ? (
+                          <Icons.spinner
+                            size={15}
+                            className=" text-white animate-spin"
+                          />
+                        ) : (
+                          <ArrowUp size={15} className="text-white" />
+                        )}
+                      </Button>
+                    </div>
+                  </div>
                 </div>
+              </form>
+              <div className="flex flex-wrap lg:hidden gap-3 flex-row items-center justify-center">
+                {examplePrompts.map((example, index) => (
+                  <button
+                    key={index}
+                    className="px-3 py-1.5 flex items-center gap-2 text-sm bg-white shadow-sm rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50 "
+                    onClick={() => {
+                      if (status !== "authenticated" || !session) {
+                        const encodedPrompt = encodeURIComponent(example.name);
+                        router.push(`/login?returnPrompt=${encodedPrompt}`);
+                      } else {
+                        setUserPrompt(example.name);
+                      }
+                    }}
+                  >
+                    {example.icon} {example.name}
+                  </button>
+                ))}
               </div>
             </div>
-          </form>
-        </div>
 
-        <div className="space-y-3 pt-10">
-          <div className="text-sm text-gray-400">Try building</div>
-          <div className="flex flex-wrap gap-2 lg:gap-3 flex-row items-center justify-center">
-            {examplePrompts.map((example, index) => (
-              <button
-                key={index}
-                className="px-3 py-1.5 flex items-center gap-1 text-sm bg-white border border-gray-200 rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50 "
-                onClick={() => {
-                  if (status !== "authenticated" || !session) {
-                    const encodedPrompt = encodeURIComponent(example);
-                    router.push(`/login?returnPrompt=${encodedPrompt}`);
-                  } else {
-                    setUserPrompt(example);
-                  }
-                }}
-              >
-                {example} <LucideArrowRight size={15} />
-              </button>
-            ))}
-          </div>
-        </div>
+            <div className="w-full h-full space-y-2 hidden lg:flex flex-col gap-2">
+              <div className="text-sm text-gray-400">Try building</div>
+              <div className="flex flex-wrap gap-3 flex-row items-center justify-center">
+                {examplePrompts.map((example, index) => (
+                  <button
+                    key={index}
+                    className="px-3 py-1.5 flex items-center gap-2 text-sm bg-white shadow-sm rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50 "
+                    onClick={() => {
+                      if (status !== "authenticated" || !session) {
+                        const encodedPrompt = encodeURIComponent(example.name);
+                        router.push(`/login?returnPrompt=${encodedPrompt}`);
+                      } else {
+                        setUserPrompt(example.name);
+                      }
+                    }}
+                  >
+                    {example.icon} {example.name}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-        {/* Start coding section */}
-        <div className="space-y-6 pt-12">
-          <h2 className="text-sm font-medium text-gray-700">
-            Or start a blank app with your favorite stack
-          </h2>
+            {/* Start coding section */}
+            <div className="h-full w-full space-y-2">
+              <h2 className="text-sm text-gray-400">
+                Or start a blank app with your favorite stack
+              </h2>
 
-          <div className="flex items-center space-x-2 overflow-x-auto pb-2 justify-center">
-            <div className="flex items-center gap-3">
-              {STARTER_TEMPLATES.map((template) => (
-                <button
-                  key={template.name}
-                  onClick={() => handleTemplateClick(template)}
-                  className={`flex flex-col items-center gap-2 group hover:bg-gray-100 rounded-xl p-4 transition-colors justify-center `}
-                  aria-label={template.label}
-                >
-                  <div className="w-7 h-7 flex items-center justify-center opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-opacity">
-                    {Icons[template.icon]({
-                      className: "w-7 h-7",
-                      style: { maskType: "alpha" },
-                    })}
-                  </div>
-                </button>
-              ))}
+              <div className="flex items-center justify-center flex-wrap gap-3">
+                {STARTER_TEMPLATES.map((template) => (
+                  <button
+                    key={template.name}
+                    onClick={() => handleTemplateClick(template)}
+                    className={`flex flex-col items-center gap-2 shadow-sm border-none bg-white group hover:bg-gray-100 rounded-2xl p-4 transition-colors justify-center `}
+                    aria-label={template.label}
+                  >
+                    <div className="w-7 h-7 flex items-center justify-center opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-opacity">
+                      {Icons[template.icon]({
+                        className: "w-7 h-7",
+                        style: { maskType: "alpha" },
+                      })}
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
