@@ -443,9 +443,9 @@ function Chat() {
         </header>
       )}
 
-      <div className="w-full h-full px-6 pb-6 overflow-y-auto">
+      <div className="w-full h-full px-2 md:px-6 pb-6 overflow-y-auto">
         <div className="w-full h-full bg-[#FAFAFA] rounded-3xl">
-          <div className="max-w-4xl mx-auto h-full px-6 py-8 flex flex-col gap-10">
+          <div className="max-w-4xl mx-auto h-full p-2 md:px-6 md:py-8 flex flex-col gap-10">
             {/* Heading */}
             <div className="h-full w-full">
               <div className="flex items-center gap-2 lg:gap-4 flex-col  mt-8">
@@ -457,7 +457,7 @@ function Chat() {
                     Beta
                   </Badge>
                 </div>
-                <p className="text-gray-500 text-center text-lg">
+                <p className="text-gray-500 text-center text-sm md:text-lg">
                   Yep builds complete, cross-platform web apps using AI.
                 </p>
               </div>
