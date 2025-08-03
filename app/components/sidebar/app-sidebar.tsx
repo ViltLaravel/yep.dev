@@ -22,9 +22,8 @@ import { usePathname, useRouter } from "next/navigation";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { NavUser } from "./nav-user";
-import { HomeIcon } from "lucide-react";
+import { Bangers } from "next/font/google";
 
-// This is sample data
 const data = {
   user: {
     name: "shadcn",
@@ -34,13 +33,17 @@ const data = {
   navMain: [],
 };
 
+const bangers = Bangers({
+  subsets: ["latin"],
+  weight: "400",
+});
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [activeItem, setActiveItem] = React.useState(data.navMain[0]);
   const { open, setOpen } = useSidebar();
   const router = useRouter();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
   const pathname = usePathname();
   const activeId = pathname?.split("/").pop();
 
@@ -119,7 +122,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarHeader className="gap-3.5 border-b border-gray-200 p-4">
           <div className="flex w-full items-center justify-between">
             <div
-              className="text-base font-medium text-gray-900 cursor-pointer"
+              className={`text-base font-medium text-gray-900 cursor-pointer ${bangers.className}`}
               onClick={handleHomepageClick}
             >
               Yep Dev

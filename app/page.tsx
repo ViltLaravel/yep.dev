@@ -26,7 +26,9 @@ import {
   LucideArrowRight,
   LucideBox,
   LucideBriefcase,
+  LucideCircleDollarSign,
   LucideClipboard,
+  LucideCoins,
   LucideLogOut,
   LucideMenu,
   LucideMessageCircle,
@@ -55,6 +57,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import AppDrawer from "./components/sidebar/app-drawer";
+import { Bangers } from "next/font/google";
+
+const bangers = Bangers({
+  subsets: ["latin"],
+  weight: "400",
+});
 
 function Chat() {
   const { data: session, status } = useSession();
@@ -355,22 +366,24 @@ function Chat() {
   };
 
   return (
-    <div className="bg-white min-h-screen text-gray-900 w-full h-full">
-      {/* Navbar */}
+    <div className="bg-white text-gray-900 w-full h-full overflow-y-auto">
       {status === "unauthenticated" ? (
         <Navbar />
       ) : (
-        <header className="flex w-full h-16 top-0 sticky justify-between items-center p-3">
-          <h4 className="text-xl font-extrabold w-full max-w-36">Yep Dev</h4>
-          <div className="md:hidden flex justify-end items-center gap-2">
-            <div className="text-sm">
-              Available Credits:{" "}
-              {loadingCredits
-                ? "..."
-                : creditBalance
-                ? creditBalance.toFixed(2)
-                : 0}
-            </div>
+        <header className="flex w-full h-16 top-0 sticky justify-between bg-white items-center p-3">
+          <div className="w-full flex gap-2 justify-start items-center md:hidden">
+            <AppDrawer />
+            <p className="text-gray-200">/</p>
+            <span className={`text-xl font-extrabold ${bangers.className}`}>
+              Yep Dev
+            </span>
+          </div>
+          <span
+            className={`text-xl hidden md:flex font-extrabold ${bangers.className}`}
+          >
+            Yep Dev
+          </span>
+          <div className="flex justify-end items-center gap-2">
             <SidebarMenu className="flex w-fit ">
               <SidebarMenuItem>
                 <DropdownMenu
@@ -382,25 +395,52 @@ function Chat() {
                       size="lg"
                       className="flex justify-center"
                     >
-                      <LucideMenu />
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage
+                          src={session.user.image ?? "/yep-assets/profile.jpg"}
+                          alt="profile-img"
+                        />
+                        <AvatarFallback>YD</AvatarFallback>
+                      </Avatar>
                     </SidebarMenuButton>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
-                    className="w-[--radix-dropdown-menu-trigger-width] min-w-56 bg-white rounded-lg border border-gray-200"
+                    className="w-[--radix-dropdown-menu-trigger-width] p-0 min-w-56 bg-white rounded-lg border border-gray-200"
                     side="bottom"
                     align="end"
                     sideOffset={4}
                   >
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                      <User />
-                      {session?.user?.email}
+                    <DropdownMenuItem className="flex flex-col gap-1 justify-start items-start">
+                      <h4>{session.user.name}</h4>
+                      <p className="text-xs text-gray-400">
+                        {session?.user?.email}
+                      </p>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleBuyCredits}>
-                      <Sparkle />
-                      Buy Credits
+                    <Separator className="bg-gray-200 w-full" />
+                    <DropdownMenuItem className="flex flex-col gap-2 justify-start items-start">
+                      <h4 className="text-gray-400 text-xs font-medium">
+                        Credit Balance
+                      </h4>
+                      <div className="flex w-full justify-between items-center text-xs">
+                        <span>Available Credits</span>
+                        <p className="text-gray-400">
+                          {loadingCredits
+                            ? "..."
+                            : creditBalance
+                            ? creditBalance.toFixed(2)
+                            : 0}
+                        </p>
+                      </div>
+                      <Button className="w-full" onClick={handleBuyCredits}>
+                        <LucideCircleDollarSign />
+                        Buy More Credits
+                      </Button>
                     </DropdownMenuItem>
+                    <Separator className="w-full bg-gray-200" />
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem
+                      className="cursor-pointer"
                       onClick={() =>
                         signOut({
                           callbackUrl: "/login",
@@ -409,36 +449,13 @@ function Chat() {
                       }
                     >
                       <LogOut />
-                      Log out
+                      Sign Out
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                   </DropdownMenuContent>
                 </DropdownMenu>
               </SidebarMenuItem>
             </SidebarMenu>
-          </div>
-          <div className="w-full justify-end items-center gap-4 hidden md:flex">
-            <div className="text-sm">{session?.user?.email}</div>
-            <div className="text-sm">
-              Available Credits:{" "}
-              {loadingCredits
-                ? "..."
-                : creditBalance
-                ? creditBalance.toFixed(2)
-                : 0}
-            </div>
-            <Button
-              className="rounded-full shadow-sm bg-white hover:bg-gray-100 border border-gray-200 p-3 text-gray-900 "
-              onClick={handleBuyCredits}
-            >
-              Buy Credits
-            </Button>
-            <Button
-              className="rounded-full shadow-sm bg-white hover:bg-gray-100 border border-gray-200 p-3 text-gray-900 "
-              onClick={handleLogout}
-            >
-              Sign Out <LucideLogOut size={15} />
-            </Button>
           </div>
         </header>
       )}
