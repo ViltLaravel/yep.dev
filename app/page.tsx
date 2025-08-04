@@ -60,12 +60,6 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import AppDrawer from "./components/sidebar/app-drawer";
-import { Bangers } from "next/font/google";
-
-const bangers = Bangers({
-  subsets: ["latin"],
-  weight: "400",
-});
 
 function Chat() {
   const { data: session, status } = useSession();
@@ -374,15 +368,9 @@ function Chat() {
           <div className="w-full flex gap-2 justify-start items-center md:hidden">
             <AppDrawer />
             <p className="text-gray-200">/</p>
-            <span className={`text-xl font-extrabold ${bangers.className}`}>
-              Yep Dev
-            </span>
+            <span className="text-xl font-extrabold">Yep.dev</span>
           </div>
-          <span
-            className={`text-xl hidden md:flex font-extrabold ${bangers.className}`}
-          >
-            Yep Dev
-          </span>
+          <span className="text-xl hidden md:flex font-extrabold">Yep.dev</span>
           <div className="flex justify-end items-center gap-2">
             <SidebarMenu className="flex w-fit ">
               <SidebarMenuItem>

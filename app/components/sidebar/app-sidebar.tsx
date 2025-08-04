@@ -122,10 +122,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarHeader className="gap-3.5 border-b border-gray-200 p-4">
           <div className="flex w-full items-center justify-between">
             <div
-              className={`text-base font-medium text-gray-900 cursor-pointer ${bangers.className}`}
+              className="text-base font-medium text-gray-900 cursor-pointer"
               onClick={handleHomepageClick}
             >
-              Yep Dev
+              Yep.dev
             </div>
             {open && (
               <SidebarTrigger
