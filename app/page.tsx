@@ -385,7 +385,7 @@ function Chat() {
                     >
                       <Avatar className="h-10 w-10">
                         <AvatarImage
-                          src={session.user.image ?? "/yep-assets/profile.jpg"}
+                          src={`/api/google-images?url=${encodeURIComponent(session.user.image ?? '/yep-assets/profile.jpg')}`}
                           alt="profile-img"
                         />
                         <AvatarFallback>YD</AvatarFallback>
