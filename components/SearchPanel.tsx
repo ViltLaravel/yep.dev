@@ -210,42 +210,28 @@ export function SearchPanel() {
   }, [searchResults]);
 
   return (
-    <div className="flex flex-col h-full bg-[#101012] text-[#c0c0c0]">
+    <div className="flex flex-col h-full bg-white text-gray-700">
       {/* Search Input */}
-      <div className="p-3 border-b border-[#313133] space-y-2">
+      <div className="p-3 border-b border-gray-200 space-y-2 bg-white">
         <div className="relative">
-          <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#969798]" />
+          <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search"
-            className="pl-8 bg-[#161618] border-[#313133] text-[#c0c0c0] placeholder:text-[#969798] focus:border-[#007acc] focus:ring-0 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none focus-visible:outline-none transition-all duration-200"
+            className="pl-8 bg-white border-gray-200 text-gray-700 placeholder:text-gray-400 focus:border-blue-600 focus:ring-0 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none focus-visible:outline-none transition-all duration-200"
           />
           {searchQuery && (
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setSearchQuery('')}
-              className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0 hover:bg-[#2a2a2c]"
+              className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0 hover:bg-blue-50"
             >
               <X className="h-3 w-3" />
             </Button>
           )}
         </div>
-
-        {/* Replace Input */}
-        {/* {showReplace && (
-          <div className="relative">
-            <Replace className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#969798]" />
-            <Input
-              value={replaceQuery}
-              onChange={(e) => setReplaceQuery(e.target.value)}
-              placeholder="Replace"
-              className="pl-8 bg-[#161618] border-[#313133] text-[#c0c0c0] placeholder:text-[#969798] focus:border-[#007acc] focus:outline-none focus:ring-0 text-sm"
-            />
-          </div>
-        )} */}
-
         {/* Search Options */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-1">
@@ -253,7 +239,7 @@ export function SearchPanel() {
               variant="ghost"
               size="sm"
               onClick={() => setSearchOptions(prev => ({ ...prev, caseSensitive: !prev.caseSensitive }))}
-              className={`h-6 w-6 p-0 ${searchOptions.caseSensitive ? 'bg-[#007acc] text-white' : 'hover:bg-[#2a2a2c]'}`}
+              className={`h-6 w-6 p-0 ${searchOptions.caseSensitive ? 'bg-blue-600 text-white' : 'hover:bg-blue-50'}`}
               title="Match Case"
             >
               <Type className="h-3 w-3" />
@@ -262,7 +248,7 @@ export function SearchPanel() {
               variant="ghost"
               size="sm"
               onClick={() => setSearchOptions(prev => ({ ...prev, wholeWord: !prev.wholeWord }))}
-              className={`h-6 w-6 p-0 ${searchOptions.wholeWord ? 'bg-[#007acc] text-white' : 'hover:bg-[#2a2a2c]'}`}
+              className={`h-6 w-6 p-0 ${searchOptions.wholeWord ? 'bg-blue-600 text-white' : 'hover:bg-blue-50'}`}
               title="Match Whole Word"
             >
               <Circle className="h-3 w-3" />
@@ -271,29 +257,16 @@ export function SearchPanel() {
               variant="ghost"
               size="sm"
               onClick={() => setSearchOptions(prev => ({ ...prev, useRegex: !prev.useRegex }))}
-              className={`h-6 w-6 p-0 ${searchOptions.useRegex ? 'bg-[#007acc] text-white' : 'hover:bg-[#2a2a2c]'}`}
+              className={`h-6 w-6 p-0 ${searchOptions.useRegex ? 'bg-blue-600 text-white' : 'hover:bg-blue-50'}`}
               title="Use Regular Expression"
             >
               <Code className="h-3 w-3" />
             </Button>
           </div>
-
-          {/* <div className="flex items-center space-x-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowReplace(!showReplace)}
-              className="h-6 px-2 text-xs hover:bg-[#2a2a2c]"
-              title="Toggle Replace"
-            >
-              <Replace className="h-3 w-3" />
-            </Button>
-          </div> */}
         </div>
-
         {/* Results Summary */}
         {searchQuery && (
-          <div className="text-xs text-[#969798]">
+          <div className="text-xs text-gray-400">
             {searchQuery !== debouncedSearchQuery || isSearching ? (
               'Searching...'
             ) : (
@@ -302,20 +275,18 @@ export function SearchPanel() {
           </div>
         )}
       </div>
-
       {/* Search Results */}
-      <ScrollArea className="flex-1">
+      <ScrollArea className="flex-1 bg-white">
         <div className="p-2">
           {debouncedSearchQuery && !isSearching && searchResults.length === 0 && (
-            <div className="text-center text-[#969798] text-sm py-4">
+            <div className="text-center text-gray-400 text-sm py-4">
               No results found
             </div>
           )}
-
           {searchResults.map((result) => (
             <div key={result.filePath} className="mb-2">
               {/* File Header */}
-              <div className="flex items-center p-1 hover:bg-[#2a2a2c] cursor-pointer rounded text-sm">
+              <div className="flex items-center p-1 hover:bg-blue-50 cursor-pointer rounded text-sm">
                 <div
                   className="flex items-center flex-shrink-0"
                   onClick={() => toggleFileExpansion(result.filePath)}
@@ -330,30 +301,29 @@ export function SearchPanel() {
                   className="flex items-center flex-1 min-w-0"
                   onClick={() => handleResultClick(result.filePath)}
                 >
-                  <File className="h-3 w-3 mr-2 text-[#007acc]" />
-                  <span className="text-[#c0c0c0] truncate flex-1">{result.fileName}</span>
+                  <File className="h-3 w-3 mr-2 text-blue-600" />
+                  <span className="text-gray-700 truncate flex-1">{result.fileName}</span>
                 </div>
-                <span className="text-[#969798] text-xs ml-2 flex-shrink-0">
+                <span className="text-gray-400 text-xs ml-2 flex-shrink-0">
                   {result.matches.length}
                 </span>
               </div>
-
               {/* Match Results */}
               {expandedFiles.has(result.filePath) && (
                 <div className="ml-6 space-y-1">
                   {result.matches.map((match, index) => (
                     <div
                       key={index}
-                      className="flex items-start p-1 hover:bg-[#2a2a2c] cursor-pointer rounded text-xs"
+                      className="flex items-start p-1 hover:bg-blue-50 cursor-pointer rounded text-xs"
                       onClick={() => handleResultClick(result.filePath, match.line, match.column)}
                     >
-                      <span className="text-[#969798] w-8 text-right mr-2 flex-shrink-0">
+                      <span className="text-gray-400 w-8 text-right mr-2 flex-shrink-0">
                         {match.line}
                       </span>
                       <div className="flex-1 min-w-0">
-                        <div className="text-[#c0c0c0] truncate font-mono">
+                        <div className="text-gray-700 truncate font-mono">
                           {match.preview.substring(0, match.matchStart - Math.max(0, match.matchStart - 20))}
-                          <span className="bg-[#007acc] text-white px-0.5">
+                          <span className="bg-blue-100 text-blue-600 px-0.5 rounded">
                             {match.text}
                           </span>
                           {match.preview.substring(match.matchEnd - Math.max(0, match.matchStart - 20))}
@@ -367,20 +337,6 @@ export function SearchPanel() {
           ))}
         </div>
       </ScrollArea>
-
-      {/* Replace Actions */}
-      {/* {showReplace && debouncedSearchQuery && searchResults.length > 0 && (
-        <div className="p-2 border-t border-[#313133]">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleReplaceAll}
-            className="w-full text-xs bg-[#161618] border-[#313133] hover:bg-[#2a2a2c]"
-          >
-            Replace All ({totalMatches})
-          </Button>
-        </div>
-      )} */}
     </div>
   );
 }

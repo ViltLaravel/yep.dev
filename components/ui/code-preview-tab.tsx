@@ -83,30 +83,30 @@ const CodePreviewTabTrigger = React.forwardRef<
       ref={setRefs}
       className={cn(
         "relative px-5 h-10 flex items-center justify-center",
-        "text-[#8a8a8d] data-[state=active]:text-white", 
+        "text-gray-500 data-[state=active]:text-blue-600",
         "text-sm font-medium tracking-wide",
         "transition-colors duration-200",
-        "focus:outline-none focus-visible:bg-white/5",
+        "focus:outline-none focus-visible:bg-blue-50",
         "select-none group",
+        "rounded-t-md",
+        "data-[state=active]:bg-white data-[state=inactive]:hover:bg-gray-100",
         className
       )}
       {...props}
     >
       <span className="relative z-10">{children}</span>
-      
       {/* Subtle background indicator only visible on hover when not active */}
       <span 
         className={cn(
-          "absolute inset-0 rounded-sm bg-white/5 opacity-0 transition-opacity group-hover:opacity-100",
+          "absolute inset-0 rounded-t-md bg-gray-100 opacity-0 transition-opacity group-hover:opacity-100",
           isActive ? "hidden" : ""
         )}
       />
-      
       {/* Active indicator line */}
       {isActive && (
         <motion.div
           layoutId="activeTabLine"
-          className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#3b82f6]"
+          className="absolute bottom-0 left-2 right-2 h-[3px] bg-blue-600 rounded"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.2 }}

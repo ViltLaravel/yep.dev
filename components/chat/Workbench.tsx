@@ -249,8 +249,8 @@ export function Workbench({
   }, [projectId, session?.user?.id, webContainerInstance]);
 
   return (
-    <div className="flex flex-col h-full bg-[#101012] border-l border-[#313133] shadow-lg text-sm text-[#c0c0c0]">
-      <div className="flex items-center pr-2 border-b border-[#313133] flex-shrink-0 bg-[#161618]">
+    <div className="flex flex-col h-full bg-white border-l border-gray-200 shadow-lg text-sm text-gray-800">
+      <div className="flex items-center pr-2 border-b border-gray-200 flex-shrink-0 bg-white">
         <CodePreviewTab
           value={currentView}
           onValueChange={(val) => setWorkbenchView(val as WorkbenchViewType)}
@@ -260,7 +260,7 @@ export function Workbench({
               <CodePreviewTabTrigger
                 key={option.value}
                 value={option.value}
-                className="px-3 py-1 text-xs h-full data-[state=active]:bg-[#2a2a2c] data-[state=active]:text-white text-[#969798]"
+                className="px-3 py-1 text-xs h-full data-[state=active]:bg-gray-100 data-[state=active]:text-blue-600 text-gray-500"
               >
                 {option.label}
               </CodePreviewTabTrigger>
@@ -273,10 +273,10 @@ export function Workbench({
             currentDocument?.filePath &&
             isCurrentFileUnsaved && (
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={handleSave}
-                className="text-xs h-7 px-2 text-[#c0c0c0] hover:text-white bg-[#2a2a2c] hover:bg-[#2b2b2e]"
+                className="text-xs h-7 px-2 text-blue-600 border-blue-200 hover:text-white hover:bg-blue-600"
               >
                 <Icons.save className="h-3.5 w-3.5 mr-1" /> Save
               </Button>
@@ -285,11 +285,11 @@ export function Workbench({
 
         <div className="ml-auto flex items-center space-x-1">
           <Button
-            variant="ghost"
+            variant="outline"
             size="icon"
             onClick={handleDownloadProject}
             disabled={isDownloading || !projectId}
-            className="h-7 w-7 text-[#c0c0c0] hover:text-white bg-[#2a2a2c] hover:bg-[#2b2b2e] disabled:opacity-50"
+            className="h-7 w-7 text-gray-500 hover:text-blue-600 border-gray-200 hover:bg-blue-50 disabled:opacity-50"
             title={projectId ? "Download Project" : "No project available"}
           >
             {isDownloading ? (
@@ -299,11 +299,11 @@ export function Workbench({
             )}
           </Button>
           <Button
-            variant="ghost"
+            variant="outline"
             size="icon"
             onClick={() => toggleTerminal()}
             title={terminalVisible ? "Hide Terminal" : "Show Terminal"}
-            className="h-7 w-7 text-[#c0c0c0] hover:text-white bg-[#2a2a2c] hover:bg-[#2b2b2e]"
+            className="h-7 w-7 text-gray-500 hover:text-blue-600 border-gray-200 hover:bg-blue-50"
           >
             <Icons.eyes />
           </Button>
@@ -319,7 +319,7 @@ export function Workbench({
         </ResizablePanel>
         {terminalVisible && (
           <>
-            <ResizableHandle className="h-[1px] bg-[#313133]" />
+            <ResizableHandle className="h-[1px] bg-gray-200" />
             <ResizablePanel defaultSize={30} minSize={15}>
               <TerminalTabs terminalRef={mainTerminalRef} />
             </ResizablePanel>

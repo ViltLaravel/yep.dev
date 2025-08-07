@@ -30,7 +30,7 @@ export function PortDropdown() {
 
     if (!previews || previews.length === 0) {
         return (
-            <Button variant="ghost" size="icon" className="text-[#969798] h-7 w-7" disabled>
+            <Button variant="ghost" size="icon" className="text-gray-400 h-7 w-7" disabled>
                 <Plug size={16} />
             </Button>
         );
@@ -42,7 +42,7 @@ export function PortDropdown() {
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center text-[#969798] hover:text-white h-7 px-2"
+                className="flex items-center text-gray-500 hover:text-blue-600 h-7 px-2 bg-white border border-gray-200 rounded-md shadow-sm"
             >
                 <Plug size={14} className="mr-1" />
                 <span className="text-xs">{activePreview?.port || previews[0]?.port || "Port"}</span>
@@ -50,7 +50,7 @@ export function PortDropdown() {
             </Button>
 
             {isOpen && (
-                <div className="absolute left-0 mt-1 w-36 bg-[#1f1f21] border border-[#313133] rounded-md shadow-lg z-10 py-1">
+                <div className="absolute left-0 mt-1 w-36 bg-white border border-gray-200 rounded-md shadow-lg z-10 py-1">
                     {previews.map(preview => (
                         <button
                             key={preview.port}
@@ -58,7 +58,7 @@ export function PortDropdown() {
                                 setActivePreview(preview.port, preview.baseUrl);
                                 setIsOpen(false);
                             }}
-                            className={`w-full text-left px-3 py-1.5 text-xs hover:bg-[#2a2a2c] ${activePreviewPort === preview.port ? 'text-white bg-[#2a2a2c]' : 'text-[#c0c0c0]'}`}
+                            className={`w-full text-left px-3 py-1.5 text-xs rounded hover:bg-blue-50 transition-colors ${activePreviewPort === preview.port ? 'text-blue-600 bg-blue-50 font-semibold' : 'text-gray-500'}`}
                         >
                             Port {preview.port}
                         </button>

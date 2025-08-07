@@ -374,14 +374,14 @@ export const ChatPanel = ({
   };
 
   return (
-    <div className="w-full flex flex-col h-full bg-[#f7f7f8] border-[#e3e3e6] shadow overflow-hidden">
+    <div className="w-full flex flex-col h-full bg-white border border-gray-200 shadow-sm overflow-hidden">
       <div className="relative flex-1 overflow-hidden">
         {!hasLoadingStarted && (
           <div className="flex justify-center pt-2">
             <Loader2 className="w-4 h-4 animate-spin" />
           </div>
         )}
-        <ScrollArea className="h-full bg-transparent" ref={chatContainerRef}>
+        <ScrollArea className="h-full bg-white" ref={chatContainerRef}>
           <div className="py-12 px-0 sm:px-8">
             <AnimatePresence>
               <div className="flex flex-col break-words word-wrap">
@@ -449,11 +449,10 @@ export const ChatPanel = ({
             </AnimatePresence>
           </div>
         </ScrollArea>
-
         <AnimatePresence>
           {!isScrolledToBottom && (
             <motion.button
-              className="absolute bottom-4 right-4 h-8 w-8 rounded-md bg-slate-200 text-gray-500 flex items-center justify-center shadow-md hover:bg-slate-100 transition-colors z-10"
+              className="absolute bottom-4 right-4 h-8 w-8 rounded-md bg-gray-200 text-gray-500 flex items-center justify-center shadow-md hover:bg-gray-100 transition-colors z-10"
               onClick={scrollToBottom}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -466,8 +465,7 @@ export const ChatPanel = ({
           )}
         </AnimatePresence>
       </div>
-
-      <div className="p-5 bg-[#f7f7f8] flex flex-col gap-2 border-t border-[#e3e3e6]">
+      <div className="p-5 bg-gray-50 flex flex-col gap-2 border-t border-gray-200">
         <ModelSelector
           key={model}
           model={model}
@@ -478,7 +476,7 @@ export const ChatPanel = ({
         />
         {/* Image preview area */}
         {uploadedImages.length > 0 && (
-          <div className="mb-3 p-3 bg-transparent rounded-lg border-none">
+          <div className="mb-3 p-3 bg-white rounded-lg border border-gray-200">
             <div className="flex flex-wrap gap-2">
               {uploadedImages.map((image, index) => (
                 <div key={index} className="relative group">
@@ -487,7 +485,7 @@ export const ChatPanel = ({
                     alt={image.filename || "Uploaded image"}
                     width={80}
                     height={80}
-                    className="w-20 h-20 object-cover rounded border-none  bg-white"
+                    className="w-20 h-20 object-cover rounded border border-gray-200 bg-white"
                   />
                   <button
                     onClick={() => removeImage(index)}
@@ -495,7 +493,7 @@ export const ChatPanel = ({
                   >
                     <X className="w-3 h-3" />
                   </button>
-                  <div className="absolute bottom-0 left-0 right-0 bg-slate-100 bg-opacity-50 text-gray-600 text-xs p-1 rounded-b truncate">
+                  <div className="absolute bottom-0 left-0 right-0 bg-gray-100 bg-opacity-50 text-gray-600 text-xs p-1 rounded-b truncate">
                     {image.filename}
                   </div>
                 </div>
@@ -503,14 +501,12 @@ export const ChatPanel = ({
             </div>
           </div>
         )}
-
         {/* Upload error display */}
         {uploadError && (
-          <div className="mb-3 p-2 bg-red-900/20 border border-red-500/30 rounded text-red-400 text-sm">
+          <div className="mb-3 p-2 bg-red-100 border border-red-300 rounded text-red-500 text-sm">
             {uploadError}
           </div>
         )}
-
         <div className="relative rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-sm">
           <Textarea
             ref={textareaRef}
@@ -523,7 +519,7 @@ export const ChatPanel = ({
                 : "Type a message..."
             }
             className={cn(
-              "flex-1 rounded-md border-0 bg-white text-gray-600 placeholder:text-[#969798] resize-none text-sm p-3 pr-12 pb-12 min-h-[140px] max-h-[30vh] overflow-y-auto focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none focus-visible:outline-none transition-all duration-200",
+              "flex-1 rounded-md border-0 bg-white text-gray-700 placeholder:text-gray-400 resize-none text-sm p-3 pr-12 pb-12 min-h-[140px] max-h-[30vh] overflow-y-auto focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none focus-visible:outline-none transition-all duration-200",
               showingError && "opacity-50"
             )}
             rows={1}
@@ -535,7 +531,6 @@ export const ChatPanel = ({
             }}
             disabled={isProcessing || enhancingPrompt || showingError}
           />
-
           {/* Hidden file input */}
           <input
             ref={fileInputRef}
@@ -544,13 +539,12 @@ export const ChatPanel = ({
             onChange={handleFileSelect}
             className="hidden"
           />
-
           <div className="absolute bottom-0 left-0 right-0 flex items-center px-3 py-2 bg-white">
             <div className="flex items-center gap-1">
               <Button
                 size="icon"
                 variant="ghost"
-                className="h-8 w-8 text-gray-300 hover:bg-transparent hover:text-gray-200"
+                className="h-8 w-8 text-gray-400 hover:bg-gray-100 hover:text-blue-600"
                 disabled={showingError || isUploading}
                 onClick={handleUploadImage}
               >
@@ -560,29 +554,25 @@ export const ChatPanel = ({
                   <ImageIcon className="w-4 h-4" />
                 )}
               </Button>
-
               {/* Add a dropdown to select llm model*/}
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  className="text-gray-400 hover:text-gray-300 transition-colors cursor-pointer disabled:opacity-50"
+                  className="text-gray-400 hover:text-blue-600 transition-colors cursor-pointer disabled:opacity-50"
                   onClick={() => enhancePrompt(input, setInput, model)}
                   disabled={enhancingPrompt || input.length === 0}
                 >
                   <Icons.sparkles
-                    className={`w-4 h-4 ${
-                      enhancingPrompt ? "animate-pulse" : ""
-                    }`}
+                    className={`w-4 h-4 ${enhancingPrompt ? "animate-pulse" : ""}`}
                   />
                 </button>
-
                 <button
                   type="button"
                   className={cn(
                     "transition-colors cursor-pointer disabled:opacity-50",
                     webSearchEnabled
-                      ? "text-blue-400 hover:text-blue-300"
-                      : "text-gray-400 hover:text-gray-300"
+                      ? "text-blue-600 hover:text-blue-500"
+                      : "text-gray-400 hover:text-blue-600"
                   )}
                   onClick={toggleWebSearch}
                   title={
@@ -595,17 +585,16 @@ export const ChatPanel = ({
                     <Icons.search
                       className={cn(
                         "w-4 h-4",
-                        webSearchEnabled && "text-blue-400"
+                        webSearchEnabled && "text-blue-600"
                       )}
                     />
-                    <p className={webSearchEnabled ? "text-blue-400" : ""}>
+                    <p className={webSearchEnabled ? "text-blue-600" : ""}>
                       Search
                     </p>
                   </div>
                 </button>
               </div>
             </div>
-
             <div className="flex items-center gap-2 ml-auto">
               <Button
                 size="icon"
@@ -613,8 +602,8 @@ export const ChatPanel = ({
                 className={cn(
                   "h-8 w-8 rounded-md transition-colors duration-200",
                   input.trim() && !isProcessing && !showingError
-                    ? "bg-slate-200 text-gray-500 hover:bg-100"
-                    : "bg-slate-100 text-gray-500"
+                    ? "bg-gray-200 text-blue-600 hover:bg-blue-100"
+                    : "bg-gray-100 text-gray-400"
                 )}
                 disabled={isProcessing || !input.trim() || showingError}
               >
@@ -627,10 +616,9 @@ export const ChatPanel = ({
             </div>
           </div>
         </div>
-
         {!openRouterError && (
           <motion.p
-            className="text-xs text-[#969798] mt-2 flex items-center gap-1.5 justify-center"
+            className="text-xs text-gray-400 mt-2 flex items-center gap-1.5 justify-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.3 }}

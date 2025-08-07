@@ -52,9 +52,9 @@ export function PreviewPanel() {
   }, [previews.length, iframeSrc]);
 
   return (
-    <div className="flex flex-col h-full bg-[#101012]">
-      <div className="flex items-center p-2 border-b border-[#313133] bg-[#161618] flex-shrink-0 h-10">
-        <Button variant="ghost" size="icon" onClick={handleRefresh} disabled={!iframeSrc} className="text-[#969798] hover:text-white h-7 w-7">
+    <div className="flex flex-col h-full bg-white">
+      <div className="flex items-center p-2 border-b border-gray-200 bg-white flex-shrink-0 h-10">
+        <Button variant="ghost" size="icon" onClick={handleRefresh} disabled={!iframeSrc} className="text-gray-400 hover:text-blue-600 h-7 w-7">
           <RefreshCw size={16} />
         </Button>
         <div className="flex-1 mx-2">
@@ -62,15 +62,14 @@ export function PreviewPanel() {
             type="text"
             readOnly
             value={iframeSrc || 'No preview available'}
-            className="w-full p-1.5 text-xs bg-[#101012] text-[#969798] rounded border border-[#313133] focus:outline-none truncate h-7"
+            className="w-full p-1.5 text-xs bg-white text-gray-500 rounded border border-gray-200 focus:outline-none truncate h-7"
             title={iframeSrc || 'No preview available'}
           />
         </div>
         {previews && previews.length > 0 && (
           <PortDropdown />
         )}
-
-        <Button variant="ghost" size="icon" onClick={handleOpenInNewTab} disabled={!iframeSrc} className="text-[#969798] hover:text-white h-7 w-7">
+        <Button variant="ghost" size="icon" onClick={handleOpenInNewTab} disabled={!iframeSrc} className="text-gray-400 hover:text-blue-600 h-7 w-7">
           <ExternalLink size={16} />
         </Button>
       </div>
@@ -87,7 +86,7 @@ export function PreviewPanel() {
             loading="eager"
           />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-[#969798] bg-[#101012]">
+          <div className="flex flex-col items-center justify-center h-full text-gray-400 bg-white">
             <Icons.github className="h-12 w-12 mb-4 opacity-50" />
             <p className="text-sm">Preview will appear here once the server starts.</p>
             <p className="text-xs mt-1 opacity-70">Ensure your application&apos;s dev server is running.</p>

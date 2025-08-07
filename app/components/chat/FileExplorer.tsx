@@ -147,8 +147,7 @@ export default function FileExplorer({
                 className="my-0.5"
             >
                 <div
-                    className={`flex items-center p-1 rounded cursor-pointer hover:bg-[#2a2a2c] transition-colors ${selectedFile === node.fullPath && "bg-[#2a2a2c] text-white"
-                        }`}
+                    className={`flex items-center p-1 rounded cursor-pointer hover:bg-gray-100 transition-colors ${selectedFile === node.fullPath && "bg-blue-50 text-blue-600"}`}
                     onClick={() => {
                         if (!node.isDirectory) {
                             onSelectFile(node.fullPath);
@@ -173,7 +172,7 @@ export default function FileExplorer({
                 </div>
 
                 {expandedFolders.has(node.fullPath) && node.children && (
-                    <div className="pl-2 border-l border-[#313133] ml-[7px]">
+                    <div className="pl-2 border-l border-gray-200 ml-[7px]">
                         {Object.values(node.children)
                             .sort((a, b) => {
                                 if (a.isDirectory && !b.isDirectory) return -1;
@@ -189,7 +188,7 @@ export default function FileExplorer({
 
     return (
 
-        <div className="text-sm text-[#969798]">
+        <div className="text-sm text-gray-500">
             {Object.values(fileTreeRoot.children)
                 .sort((a, b) => {
                     if (a.isDirectory && !b.isDirectory) return -1;

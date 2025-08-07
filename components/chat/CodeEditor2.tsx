@@ -133,29 +133,29 @@ declare global {
         monacoInstance.languages.typescript.javascriptDefaults.addExtraLib(minimalReactDTS, 'file:///node_modules/@types/react/index.d.ts');
 
         // Configure editor theme
-        monacoInstance.editor.defineTheme('darkerTheme', {
-            base: 'vs-dark',
+        monacoInstance.editor.defineTheme('notionLightTheme', {
+            base: 'vs',
             inherit: true,
             rules: [],
             colors: {
-                'editor.background': '#161618',
-                'editor.foreground': '#f3f6f6',
-                'editorLineNumber.foreground': '#969798',
-                'editorLineNumber.activeForeground': '#f3f6f6',
-                'editorIndentGuide.background': '#2a2a2c',
-                'editor.selectionBackground': '#2a2a2c',
-                'editor.inactiveSelectionBackground': '#212122',
-                'editor.lineHighlightBackground': '#1c1c1e',
-                'editorWidget.background': '#161618',
-                'editorWidget.border': '#313133',
-                'input.background': '#161618',
-                'input.border': '#313133',
-                'inputOption.activeBorder': '#007acc',
-                'focusBorder': '#007acc',
+                'editor.background': '#ffffff',
+                'editor.foreground': '#222222',
+                'editorLineNumber.foreground': '#b0b0b0',
+                'editorLineNumber.activeForeground': '#2563eb',
+                'editorIndentGuide.background': '#e5e7eb',
+                'editor.selectionBackground': '#dbeafe',
+                'editor.inactiveSelectionBackground': '#f1f5f9',
+                'editor.lineHighlightBackground': '#f3f4f6',
+                'editorWidget.background': '#ffffff',
+                'editorWidget.border': '#e5e7eb',
+                'input.background': '#ffffff',
+                'input.border': '#e5e7eb',
+                'inputOption.activeBorder': '#2563eb',
+                'focusBorder': '#2563eb',
             }
         });
 
-        monacoInstance.editor.setTheme('darkerTheme');
+        monacoInstance.editor.setTheme('notionLightTheme');
 
         // Configure editor options
         editorInstance.updateOptions({
@@ -240,7 +240,7 @@ declare global {
             height="100%"
             language={language}
             value={value}
-            theme="vs-dark"
+            theme="notionLightTheme"
             onChange={(val) => onChange(val || '')}
             onMount={handleEditorDidMount}
             options={{

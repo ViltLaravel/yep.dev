@@ -11,13 +11,7 @@ import {
 } from "@/stores/terminal"; // Updated import
 import { useStore } from "@nanostores/react";
 import { AlertCircle, Plus, Trash2, X } from "lucide-react";
-import React, {
-  createRef,
-  useCallback,
-  useEffect,
-  useRef,
-  type RefObject,
-} from "react";
+import React, { createRef, useCallback, useEffect, useRef, RefObject } from "react";
 
 interface TerminalTabsProps {
   className?: string;
@@ -207,20 +201,20 @@ const TerminalTabs: React.FC<TerminalTabsProps> = ({
   return (
     <div
       id="terminal-container"
-      className={cn("border-t border-[#2a2a2c] bg-[#101012]", className)}
+      className={cn("border-t border-gray-200 bg-white", className)}
       style={{ height: terminalPanelHeight }}
     >
       <div className="h-full flex flex-col">
-        <div className="flex items-center justify-between px-2 border-b border-[#2a2a2c] bg-[#161618] h-10 flex-shrink-0">
+        <div className="flex items-center justify-between px-2 border-b border-gray-200 bg-white h-10 flex-shrink-0">
           <div className="bg-transparent h-full border-b-0 p-0 flex">
             {terminalSessionsArray.map((session) => (
               <div
                 key={session.id}
                 className={cn(
-                  "relative h-full border-r border-[#2a2a2c] last:border-r-0 border-b-2 flex items-center",
+                  "relative h-full border-r border-gray-200 last:border-r-0 border-b-2 flex items-center",
                   activeTerminalId === session.id
-                    ? "bg-[#1f1f21] shadow-none text-white border-b-blue-500"
-                    : "text-[#888888] border-b-transparent"
+                    ? "bg-white shadow-none text-blue-600 border-b-blue-600 font-semibold"
+                    : "text-gray-500 border-b-transparent hover:bg-blue-50"
                 )}
               >
                 <button
@@ -229,7 +223,7 @@ const TerminalTabs: React.FC<TerminalTabsProps> = ({
                       terminalActions.setActiveTerminal(session.id);
                     }
                   }}
-                  className="flex-1 px-3 py-1 h-full text-xs text-left bg-transparent border-none outline-none hover:bg-[#313133]"
+                  className="flex-1 px-3 py-1 h-full text-xs text-left bg-transparent border-none outline-none hover:bg-blue-50 rounded-t-md"
                 >
                   {session.label}
                 </button>
@@ -242,7 +236,7 @@ const TerminalTabs: React.FC<TerminalTabsProps> = ({
                   terminalSessionsArray.length > 1 && (
                     <button
                       onClick={(e) => handleCloseTerminal(session.id, e)}
-                      className="ml-1 mr-2 text-[#6e6e6e] hover:text-white p-0.5 hover:bg-[#313133] rounded-full flex-shrink-0"
+                      className="ml-1 mr-2 text-gray-400 hover:text-red-500 p-0.5 hover:bg-red-50 rounded-full flex-shrink-0"
                       aria-label={`Close ${session.label}`}
                     >
                       <X size={12} />
@@ -254,7 +248,7 @@ const TerminalTabs: React.FC<TerminalTabsProps> = ({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-full w-8 text-[#888888] hover:text-white bg-[#2a2a2c] hover:bg-[#2b2b2e] rounded-none border-r border-[#2a2a2c]"
+                className="h-full w-8 text-gray-400 hover:text-blue-600 bg-white hover:bg-blue-50 rounded-none border-r border-gray-200"
                 onClick={handleAddNewTerminal}
                 aria-label="Add new terminal"
               >
@@ -266,7 +260,7 @@ const TerminalTabs: React.FC<TerminalTabsProps> = ({
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-[#888888] hover:text-white bg-[#2a2a2c] hover:bg-[#2b2b2e]"
+              className="h-8 w-8 text-gray-400 hover:text-blue-600 bg-white hover:bg-blue-50"
               onClick={handleClearActiveTerminal}
               aria-label="Clear active terminal"
               title="Clear Terminal"
@@ -275,11 +269,9 @@ const TerminalTabs: React.FC<TerminalTabsProps> = ({
             </Button>
           </div>
         </div>
-
-        <div className="flex-1 overflow-hidden bg-[#151718] relative">
+        <div className="flex-1 overflow-hidden bg-white relative">
           {terminalSessionsArray.map((session) => {
             const isActive = activeTerminalId === session.id;
-
             return (
               <div
                 key={session.id}

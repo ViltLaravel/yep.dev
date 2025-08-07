@@ -36,26 +36,26 @@ interface TerminalProps {
 }
 
 const defaultTheme: ITheme = {
-  background: '#151718',
-  foreground: '#D1D5DB',
-  cursor: '#A0A0A0',
-  selectionBackground: 'rgba(59, 130, 246, 0.3)',
-  black: '#1E1E1E',
-  red: '#FF5555',
-  green: '#50FA7B',
-  yellow: '#F1FA8C',
-  blue: '#BD93F9',
-  magenta: '#FF79C6',
-  cyan: '#8BE9FD',
-  white: '#F8F8F2',
-  brightBlack: '#6272A4',
-  brightRed: '#FF6E6E',
-  brightGreen: '#69FF94',
-  brightYellow: '#FFFFA5',
-  brightBlue: '#D6ACFF',
-  brightMagenta: '#FF92DF',
-  brightCyan: '#A4FFFF',
-  brightWhite: '#FFFFFF'
+  background: '#ffffff',
+  foreground: '#222222',
+  cursor: '#2563eb',
+  selectionBackground: 'rgba(37, 99, 235, 0.15)', // blue-600/15
+  black: '#e5e7eb', // gray-200
+  red: '#ef4444', // red-500
+  green: '#22c55e', // green-500
+  yellow: '#eab308', // yellow-500
+  blue: '#2563eb', // blue-600
+  magenta: '#a21caf', // purple-800
+  cyan: '#06b6d4', // cyan-500
+  white: '#f3f4f6', // gray-100
+  brightBlack: '#d1d5db', // gray-300
+  brightRed: '#f87171', // red-400
+  brightGreen: '#4ade80', // green-400
+  brightYellow: '#fde68a', // yellow-200
+  brightBlue: '#60a5fa', // blue-400
+  brightMagenta: '#c084fc', // purple-400
+  brightCyan: '#67e8f9', // cyan-300
+  brightWhite: '#ffffff'
 };
 
 export const Terminal = memo(forwardRef<TerminalRef, TerminalProps>(
@@ -622,7 +622,7 @@ export const Terminal = memo(forwardRef<TerminalRef, TerminalProps>(
     return (
       <div
         className={cn(
-          "relative h-full w-full overflow-hidden",
+          "relative h-full w-full overflow-hidden bg-white border border-gray-200 shadow-sm rounded-md",
           className
         )}
       >

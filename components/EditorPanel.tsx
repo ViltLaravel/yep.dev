@@ -76,16 +76,16 @@ export function EditorPanel() {
 
   return (
     <ResizablePanelGroup direction="horizontal" className="h-full min-h-0">
-      <ResizablePanel defaultSize={25} minSize={15} className="bg-[#101012] flex flex-col min-w-[200px]">
+      <ResizablePanel defaultSize={25} minSize={15} className="bg-white flex flex-col min-w-[200px] border-r border-gray-200">
         <Tabs defaultValue="files" className="flex flex-col flex-1 h-full overflow-hidden">
-          <TabsList className="bg-[#101012] border-b border-[#313133] rounded-none justify-start h-10">
-            <TabsTrigger value="files" className="px-3 py-1.5 text-xs data-[state=active]:bg-[#2a2a2c] data-[state=active]:text-white text-[#969798]">Files</TabsTrigger>
-            <TabsTrigger value="search" className="px-3 py-1.5 text-xs data-[state=active]:bg-[#2a2a2c] data-[state=active]:text-white text-[#969798]">Search</TabsTrigger>
+          <TabsList className="bg-white border-b border-gray-200 rounded-none justify-start h-10">
+            <TabsTrigger value="files" className="px-3 py-1.5 text-xs data-[state=active]:bg-gray-100 data-[state=active]:text-blue-600 text-gray-500">Files</TabsTrigger>
+            <TabsTrigger value="search" className="px-3 py-1.5 text-xs data-[state=active]:bg-gray-100 data-[state=active]:text-blue-600 text-gray-500">Search</TabsTrigger>
           </TabsList>
-          <TabsContent value="files" className="flex-1 mt-0 overflow-hidden bg-[#101012]">
+          <TabsContent value="files" className="flex-1 mt-0 overflow-hidden bg-white">
             <ScrollArea className="h-full w-full p-1">
               {Object.keys(files).length === 0 ? (
-                <div className="text-center text-xs text-[#969798] pt-4">No files in project.</div>
+                <div className="text-center text-xs text-gray-400 pt-4">No files in project.</div>
               ) : (
                 <FileExplorer
                   files={Object.keys(files)}
@@ -95,14 +95,14 @@ export function EditorPanel() {
               )}
             </ScrollArea>
           </TabsContent>
-          <TabsContent value="search" className="flex-1 overflow-auto mt-0">
+          <TabsContent value="search" className="flex-1 overflow-auto mt-0 bg-white">
             <SearchPanel />
           </TabsContent>
         </Tabs>
       </ResizablePanel>
-      <ResizableHandle className="w-[1px] bg-[#313133]" />
-      <ResizablePanel defaultSize={75} className="bg-[#101012] flex flex-col min-w-0">
-        <div className="flex items-center justify-between px-3 py-1.5 border-b border-[#313133] bg-[#161618] flex-shrink-0 h-10">
+      <ResizableHandle className="w-[1px] bg-gray-200" />
+      <ResizablePanel defaultSize={75} className="bg-white flex flex-col min-w-0">
+        <div className="flex items-center justify-between px-3 py-1.5 border-b border-gray-200 bg-white flex-shrink-0 h-10">
           {(currentDocument?.filePath || streamingContent?.filePath) ? (
             <div className="flex items-center gap-2">
               <FileBreadcrumb
@@ -110,14 +110,14 @@ export function EditorPanel() {
                 onFileSelect={handleFileSelectInTree}
               />
               {streamingContent && (
-                <div className="flex items-center gap-1 px-2 py-0.5 bg-blue-600/20 border border-blue-500/30 rounded text-blue-400 text-xs">
+                <div className="flex items-center gap-1 px-2 py-0.5 bg-blue-100 border border-blue-200 rounded text-blue-600 text-xs">
                   <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
                   Streaming...
                 </div>
               )}
             </div>
           ) : (
-            <span className="text-xs text-[#969798]">No file selected</span>
+            <span className="text-xs text-gray-400">No file selected</span>
           )}
         </div>
         <div className="flex-1 relative min-h-0">
@@ -129,11 +129,11 @@ export function EditorPanel() {
               readOnly={isReadOnly}
             />
           ) : currentDocument?.isBinary ? (
-            <div className="flex items-center justify-center h-full text-[#969798] text-sm">
+            <div className="flex items-center justify-center h-full text-gray-400 text-sm">
               Binary file. Cannot be displayed.
             </div>
           ) : (
-            <div className="flex items-center justify-center h-full text-[#969798] text-sm">
+            <div className="flex items-center justify-center h-full text-gray-400 text-sm">
               Select a file to edit or view.
             </div>
           )}
