@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import { AuthenticatedLayout } from "@/components/layouts/AuthenticatedLayout";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Icons } from "@/components/ui/icons";
-import { Textarea } from "@/components/ui/textarea";
-import { UploadedImage, useImageUpload } from "@/hooks/useImageUpload";
-import { usePromptEnhancer } from "@/hooks/usePromptEnhancer";
+import { AuthenticatedLayout } from '@/components/layouts/AuthenticatedLayout';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Icons } from '@/components/ui/icons';
+import { Textarea } from '@/components/ui/textarea';
+import { UploadedImage, useImageUpload } from '@/hooks/useImageUpload';
+import { usePromptEnhancer } from '@/hooks/usePromptEnhancer';
 import {
   DEFAULT_MODEL,
   DEFAULT_TEMPLATE,
   STARTER_TEMPLATES,
-} from "@/lib/constants";
-import { DEFAULT_PROVIDER } from "@/lib/provider";
-import { ModelInfo } from "@/lib/types";
-import { cn } from "@/lib/utils";
-import Cookies from "js-cookie";
+} from '@/lib/constants';
+import { DEFAULT_PROVIDER } from '@/lib/provider';
+import { ModelInfo } from '@/lib/types';
+import { cn } from '@/lib/utils';
+import Cookies from 'js-cookie';
 import {
   ArrowUp,
   Image as ImageIcon,
@@ -36,30 +36,30 @@ import {
   Sparkle,
   User,
   X,
-} from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useRef, useState } from "react";
-import { ModelSelector } from "./components/chat/ModelSelector";
+} from 'lucide-react';
+import { signOut, useSession } from 'next-auth/react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { FormEvent, useEffect, useRef, useState } from 'react';
+import { ModelSelector } from './components/chat/ModelSelector';
 
-import { BuyCreditsDialog } from "./components/BuyCreditsDialog";
-import Navbar from "@/components/NavBar";
+import { BuyCreditsDialog } from './components/BuyCreditsDialog';
+import Navbar from '@/components/NavBar';
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
+} from '@/components/ui/sidebar';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import AppDrawer from "./components/sidebar/app-drawer";
+} from '@/components/ui/dropdown-menu';
+import { Separator } from '@/components/ui/separator';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import AppDrawer from './components/sidebar/app-drawer';
 
 function Chat() {
   const { data: session, status } = useSession();
@@ -72,32 +72,32 @@ function Chat() {
   const { uploadImage, isUploading, uploadError, clearError } =
     useImageUpload();
   const [isModelLoading, setIsModelLoading] = useState<string | undefined>(
-    "all"
+    'all'
   );
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
   const [showBuyCreditsDialog, setShowBuyCreditsDialog] = useState(false);
   const [webSearchEnabled, setWebSearchEnabled] = useState(() => {
-    if (typeof window !== "undefined") {
-      const savedWebSearch = Cookies.get("webSearchEnabled");
-      return savedWebSearch === "true";
+    if (typeof window !== 'undefined') {
+      const savedWebSearch = Cookies.get('webSearchEnabled');
+      return savedWebSearch === 'true';
     }
     return false;
   });
 
   const [model, setModel] = useState(() => {
-    const savedModel = Cookies.get("selectedModel");
+    const savedModel = Cookies.get('selectedModel');
     return savedModel || DEFAULT_MODEL;
   });
 
   const handleModelChange = (newModel: string) => {
-    const baseModel = newModel.replace(":online", "");
+    const baseModel = newModel.replace(':online', '');
     setModel(baseModel);
-    Cookies.set("selectedModel", baseModel, { expires: 30 });
+    Cookies.set('selectedModel', baseModel, { expires: 30 });
   };
 
   // Check for returnPrompt URL parameter and pre-fill prompt
-  const [userPrompt, setUserPrompt] = useState("");
+  const [userPrompt, setUserPrompt] = useState('');
   const { enhancePrompt, enhancingPrompt } = usePromptEnhancer();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isStarterLoading, setIsStarterLoading] = useState(false);
@@ -106,29 +106,29 @@ function Chat() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
-      const returnPrompt = urlParams.get("returnPrompt");
+      const returnPrompt = urlParams.get('returnPrompt');
       if (returnPrompt && !userPrompt) {
         setUserPrompt(decodeURIComponent(returnPrompt));
         const url = new URL(window.location.href);
-        url.searchParams.delete("returnPrompt");
+        url.searchParams.delete('returnPrompt');
         window.history.replaceState({}, document.title, url.pathname);
       }
     }
   }, [status, userPrompt]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setIsModelLoading("all");
-      fetch("/api/models")
+    if (typeof window !== 'undefined') {
+      setIsModelLoading('all');
+      fetch('/api/models')
         .then((response) => response.json())
         .then((data) => {
           const typedData = data as { modelList: ModelInfo[] };
           setModelList(typedData.modelList);
         })
         .catch((error) => {
-          console.error("Error fetching model list:", error);
+          console.error('Error fetching model list:', error);
         })
         .finally(() => {
           setIsModelLoading(undefined);
@@ -140,7 +140,7 @@ function Chat() {
     async function fetchCredits() {
       if (session?.user?.email) {
         setLoadingCredits(true);
-        const res = await fetch("/api/user/credits");
+        const res = await fetch('/api/user/credits');
         if (res.ok) {
           const data = await res.json();
           setCreditBalance(data.credits);
@@ -165,7 +165,7 @@ function Chat() {
     if (!trimmedPrompt) return;
 
     // Check if user is authenticated before checking API key
-    if (status !== "authenticated" || !session) {
+    if (status !== 'authenticated' || !session) {
       // Redirect to login with the prompt as a parameter
       const encodedPrompt = encodeURIComponent(trimmedPrompt);
       router.push(`/login?returnPrompt=${encodedPrompt}`);
@@ -178,7 +178,7 @@ function Chat() {
       let messageContent:
         | string
         | Array<{
-            type: "text" | "image_url";
+            type: 'text' | 'image_url';
             text?: string;
             image_url?: { url: string };
           }>;
@@ -186,11 +186,11 @@ function Chat() {
       if (uploadedImages.length > 0) {
         messageContent = [
           {
-            type: "text",
+            type: 'text',
             text: trimmedPrompt,
           },
           ...uploadedImages.map((image) => ({
-            type: "image_url" as const,
+            type: 'image_url' as const,
             image_url: {
               url: image.signUrl,
             },
@@ -201,13 +201,13 @@ function Chat() {
       }
 
       // Create a new conversation in the database
-      const response = await fetch("/api/conversations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch('/api/conversations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title:
             trimmedPrompt.substring(0, 50) +
-            (trimmedPrompt.length > 50 ? "..." : ""),
+            (trimmedPrompt.length > 50 ? '...' : ''),
           initialMessage: messageContent,
           templateName: DEFAULT_TEMPLATE.name,
           sendFirst: true,
@@ -222,8 +222,8 @@ function Chat() {
           return;
         }
         console.error(
-          "Failed to start chat:",
-          errorData.error || "Unknown error"
+          'Failed to start chat:',
+          errorData.error || 'Unknown error'
         );
         setIsStarterLoading(false);
         return;
@@ -231,7 +231,7 @@ function Chat() {
 
       const { conversation } = await response.json();
       if (!conversation || !conversation.id) {
-        console.error("API did not return a valid conversation object.");
+        console.error('API did not return a valid conversation object.');
         setIsStarterLoading(false);
         return;
       }
@@ -239,33 +239,33 @@ function Chat() {
       // Clean URL - only include conversation ID
       router.push(`/chat/${conversation.id}`);
     } catch (error) {
-      console.error("Error initiating chat:", error);
+      console.error('Error initiating chat:', error);
     } finally {
       setIsStarterLoading(false);
-      setUserPrompt("");
+      setUserPrompt('');
       setUploadedImages([]);
     }
   };
 
   const examplePrompts = [
     {
-      name: "A todo app with React and TypeScript",
+      name: 'A todo app with React and TypeScript',
       icon: <LucideClipboard size={15} />,
     },
     {
-      name: "E-commerce dashboard with Next.js",
+      name: 'E-commerce dashboard with Next.js',
       icon: <LucideShoppingCart size={15} />,
     },
     {
-      name: "Blog with Astro and Tailwind",
+      name: 'Blog with Astro and Tailwind',
       icon: <LucideBox size={15} />,
     },
     {
-      name: "Chat app with React and Firebase",
+      name: 'Chat app with React and Firebase',
       icon: <LucideMessageCircle size={15} />,
     },
     {
-      name: "Job board with Express and MongoDB",
+      name: 'Job board with Express and MongoDB',
       icon: <LucideBriefcase size={15} />,
     },
   ];
@@ -273,7 +273,7 @@ function Chat() {
   const handleLogout = async () => {
     await signOut({
       redirect: true,
-      callbackUrl: "/login",
+      callbackUrl: '/login',
     });
   };
 
@@ -285,7 +285,7 @@ function Chat() {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
-    console.log("file", file);
+    console.log('file', file);
     if (!file) return;
 
     clearError();
@@ -296,13 +296,13 @@ function Chat() {
 
     // Reset the input
     if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+      fileInputRef.current.value = '';
     }
   };
 
   const handleTemplateClick = async (template: any) => {
-    if (status !== "authenticated" || !session) {
-      router.push("/login");
+    if (status !== 'authenticated' || !session) {
+      router.push('/login');
       return;
     }
 
@@ -310,9 +310,9 @@ function Chat() {
 
     try {
       // Create a new conversation with the selected template
-      const response = await fetch("/api/conversations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch('/api/conversations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: `New ${template.label} Project`,
           templateName: template.name,
@@ -328,8 +328,8 @@ function Chat() {
           return;
         }
         console.error(
-          "Failed to start template project:",
-          errorData.error || "Unknown error"
+          'Failed to start template project:',
+          errorData.error || 'Unknown error'
         );
         setIsStarterLoading(false);
         return;
@@ -337,7 +337,7 @@ function Chat() {
 
       const { conversation } = await response.json();
       if (!conversation || !conversation.id) {
-        console.error("API did not return a valid conversation object.");
+        console.error('API did not return a valid conversation object.');
         setIsStarterLoading(false);
         return;
       }
@@ -345,7 +345,7 @@ function Chat() {
       // Navigate to the clean conversation URL
       router.push(`/chat/${conversation.id}`);
     } catch (error) {
-      console.error("Error creating template project:", error);
+      console.error('Error creating template project:', error);
     } finally {
       setIsStarterLoading(false);
     }
@@ -354,14 +354,14 @@ function Chat() {
   const toggleWebSearch = () => {
     const newWebSearchEnabled = !webSearchEnabled;
     setWebSearchEnabled(newWebSearchEnabled);
-    Cookies.set("webSearchEnabled", String(newWebSearchEnabled), {
+    Cookies.set('webSearchEnabled', String(newWebSearchEnabled), {
       expires: 365,
     });
   };
 
   return (
     <div className="bg-white text-gray-900 w-full h-full overflow-y-auto">
-      {status === "unauthenticated" ? (
+      {status === 'unauthenticated' ? (
         <Navbar />
       ) : (
         <header className="flex w-full h-16 top-0 sticky justify-between bg-white items-center p-3">
@@ -385,7 +385,9 @@ function Chat() {
                     >
                       <Avatar className="h-10 w-10">
                         <AvatarImage
-                          src={`/api/google-images?url=${encodeURIComponent(session.user.image ?? '/yep-assets/profile.jpg')}`}
+                          src={`/api/google-images?url=${encodeURIComponent(
+                            session.user.image ?? '/yep-assets/profile.jpg'
+                          )}`}
                           alt="profile-img"
                         />
                         <AvatarFallback>YD</AvatarFallback>
@@ -414,7 +416,7 @@ function Chat() {
                         <span>Available Credits</span>
                         <p className="text-gray-400">
                           {loadingCredits
-                            ? "..."
+                            ? '...'
                             : creditBalance
                             ? creditBalance.toFixed(2)
                             : 0}
@@ -431,7 +433,7 @@ function Chat() {
                       className="cursor-pointer"
                       onClick={() =>
                         signOut({
-                          callbackUrl: "/login",
+                          callbackUrl: '/login',
                           redirect: true,
                         })
                       }
@@ -493,7 +495,7 @@ function Chat() {
                           <div key={index} className="relative group">
                             <Image
                               src={image.url}
-                              alt={image.filename || "Uploaded image"}
+                              alt={image.filename || 'Uploaded image'}
                               width={80}
                               height={80}
                               className="w-20 h-20 object-cover rounded border border-gray-200"
@@ -531,7 +533,7 @@ function Chat() {
                         if (!items) return;
 
                         for (const item of Array.from(items)) {
-                          if (item.type.startsWith("image/")) {
+                          if (item.type.startsWith('image/')) {
                             event.preventDefault();
                             clearError();
 
@@ -552,10 +554,10 @@ function Chat() {
                       className="min-h-[56px] max-h-[10px] resize-none border-0 p-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-500 text-sm pr-12 overflow-y-auto "
                       translate="no"
                       style={{
-                        transition: "height 0.1s ease",
+                        transition: 'height 0.1s ease',
                       }}
                       onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
+                        if (e.key === 'Enter' && !e.shiftKey) {
                           e.preventDefault();
                           handleSubmit(e);
                         }
@@ -603,8 +605,8 @@ function Chat() {
                   />
 
                   <div className="flex justify-between w-full">
-                    <div className="hidden md:flex justify-start flex-row items-center w-full">
-                      <div className="w-fit text-sm">
+                    <div className="hidden md:flex justify-start flex-row items-center w-full max-w-[400px]">
+                      <div className="w-full text-sm">
                         <ModelSelector
                           model={model}
                           isMain={true}
@@ -634,27 +636,27 @@ function Chat() {
                       <button
                         type="button"
                         className={cn(
-                          "transition-colors rounded-full shadow-sm hover:bg-gray-100 border border-gray-200 px-3 h-full cursor-pointer disabled:opacity-50",
+                          'transition-colors rounded-full shadow-sm hover:bg-gray-100 border border-gray-200 px-3 h-full cursor-pointer disabled:opacity-50',
                           webSearchEnabled
-                            ? "text-blue-600 hover:text-blue-500"
-                            : "text-black hover:text-blue-500"
+                            ? 'text-blue-600 hover:text-blue-500'
+                            : 'text-black hover:text-blue-500'
                         )}
                         onClick={toggleWebSearch}
                         title={
                           webSearchEnabled
-                            ? "Disable web search"
-                            : "Enable web search"
+                            ? 'Disable web search'
+                            : 'Enable web search'
                         }
                       >
                         <div className="flex gap-1 items-center">
                           <Icons.search
                             className={cn(
-                              "w-4 h-4",
-                              webSearchEnabled && "text-blue-400"
+                              'w-4 h-4',
+                              webSearchEnabled && 'text-blue-400'
                             )}
                           />
                           <p
-                            className={webSearchEnabled ? "text-blue-600" : ""}
+                            className={webSearchEnabled ? 'text-blue-600' : ''}
                           >
                             Search
                           </p>
@@ -671,7 +673,7 @@ function Chat() {
                         <Icons.sparkles
                           size={15}
                           className={`${
-                            enhancingPrompt ? "animate-pulse" : ""
+                            enhancingPrompt ? 'animate-pulse' : ''
                           }`}
                         />
                         Enhance
@@ -696,27 +698,27 @@ function Chat() {
                       <button
                         type="button"
                         className={cn(
-                          "transition-colors h-full cursor-pointer disabled:opacity-50",
+                          'transition-colors h-full cursor-pointer disabled:opacity-50',
                           webSearchEnabled
-                            ? "text-blue-600 hover:text-blue-500"
-                            : "text-black hover:text-blue-500"
+                            ? 'text-blue-600 hover:text-blue-500'
+                            : 'text-black hover:text-blue-500'
                         )}
                         onClick={toggleWebSearch}
                         title={
                           webSearchEnabled
-                            ? "Disable web search"
-                            : "Enable web search"
+                            ? 'Disable web search'
+                            : 'Enable web search'
                         }
                       >
                         <div className="flex gap-1 items-center">
                           <Icons.search
                             className={cn(
-                              "w-4 h-4",
-                              webSearchEnabled && "text-blue-400"
+                              'w-4 h-4',
+                              webSearchEnabled && 'text-blue-400'
                             )}
                           />
                           <p
-                            className={webSearchEnabled ? "text-blue-600" : ""}
+                            className={webSearchEnabled ? 'text-blue-600' : ''}
                           >
                             Search
                           </p>
@@ -733,7 +735,7 @@ function Chat() {
                         <Icons.sparkles
                           size={15}
                           className={`${
-                            enhancingPrompt ? "animate-pulse text-blue-600" : ""
+                            enhancingPrompt ? 'animate-pulse text-blue-600' : ''
                           }`}
                         />
                       </button>
@@ -741,7 +743,7 @@ function Chat() {
                         type="submit"
                         size="icon"
                         className={`w-fit h-fit p-1 border-none rounded-lg bg-gray-200 text-white ${
-                          userPrompt.length > 0 && "bg-black"
+                          userPrompt.length > 0 && 'bg-black'
                         }`}
                         disabled={
                           isStarterLoading ||
@@ -769,7 +771,7 @@ function Chat() {
                     key={index}
                     className="px-3 py-1.5 flex items-center gap-2 text-sm bg-white shadow-sm rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50 "
                     onClick={() => {
-                      if (status !== "authenticated" || !session) {
+                      if (status !== 'authenticated' || !session) {
                         const encodedPrompt = encodeURIComponent(example.name);
                         router.push(`/login?returnPrompt=${encodedPrompt}`);
                       } else {
@@ -791,7 +793,7 @@ function Chat() {
                     key={index}
                     className="px-3 py-1.5 flex items-center gap-2 text-sm bg-white shadow-sm rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50 "
                     onClick={() => {
-                      if (status !== "authenticated" || !session) {
+                      if (status !== 'authenticated' || !session) {
                         const encodedPrompt = encodeURIComponent(example.name);
                         router.push(`/login?returnPrompt=${encodedPrompt}`);
                       } else {
@@ -821,8 +823,8 @@ function Chat() {
                   >
                     <div className="w-7 h-7 flex items-center justify-center opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-opacity">
                       {Icons[template.icon]({
-                        className: "w-7 h-7",
-                        style: { maskType: "alpha" },
+                        className: 'w-7 h-7',
+                        style: { maskType: 'alpha' },
                       })}
                     </div>
                   </button>
