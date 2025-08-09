@@ -1,16 +1,16 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { AuthProvider } from "@/components/providers/AuthProvider";
-import { Poppins } from "next/font/google";
+import type { Metadata } from 'next';
+import './globals.css';
+import { AuthProvider } from '@/components/providers/AuthProvider';
+import { Inter } from 'next/font/google';
 
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
 });
 
 export const metadata: Metadata = {
-  title: "Yep - AI Chat Bot",
-  description: "AI coding assistant with WebContainer integration",
+  title: 'Yep - AI Chat Bot',
+  description: 'AI coding assistant with WebContainer integration',
 };
 
 export default function RootLayout({
@@ -20,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${poppins.className}`}>
+      <body className={`${inter.className}`}>
         <AuthProvider>
           <div className="min-h-screen w-full">{children}</div>
         </AuthProvider>
